@@ -4,7 +4,7 @@ import pyrosim.pyrosim as pyrosim
 def Create_World():
 	pyrosim.Start_SDF("world.sdf")
 	width, length, height = 1, 1, 1 # box dimensions
-	pyrosim.Send_Cube(name="Box", pos=[2, 2, 0.5] , size=[width, length, height])
+	pyrosim.Send_Cube(name="Box", pos=[-2, -2, 0.5] , size=[width, length, height])
 	pyrosim.End()
 
 def Create_Robot():
@@ -23,5 +23,5 @@ def Create_Robot():
 	pyrosim.End()
 
 
-# Create_World()
+Create_World()
 Create_Robot()
