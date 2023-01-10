@@ -23,4 +23,4 @@ for i in range(1000):
 	p.stepSimulation()
 	# print(i)
 p.disconnect()
-print(backLegSensorValues)
+np.save("./data/backLegSensorValues", backLegSensorValues)
