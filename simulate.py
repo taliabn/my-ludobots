@@ -7,6 +7,10 @@ import pyrosim.pyrosim as pyrosim
 
 # number of times to step through simulation
 steps = 1000
+# motor control constants
+amplitude = np.pi/4
+frequency = 10
+phaseOffset = 0
 
 physicsClient = p.connect(p.GUI)
 p.setAdditionalSearchPath(pybullet_data.getDataPath())
@@ -18,10 +22,10 @@ p.loadSDF("world.sdf")
 # initialize arrays
 backLegSensorValues = np.zeros(steps)
 frontLegSensorValues = np.zeros(steps)
-targetAngles = np.sin(np.linspace(0, 2*np.pi, steps))
-targetAngles*=np.pi/4
-# np.save("./data/targetAngles", targetAngles)
-# exit()
+targetAngles = [amplitude * np.sin((2*np.pi*frequency * i/steps) + phaseOffset)
+					for i in range(steps)]
+np.save("./data/targetAngles", targetAngles)
+exit()
 
 pyrosim.Prepare_To_Simulate(robotId)
 # run simulation
