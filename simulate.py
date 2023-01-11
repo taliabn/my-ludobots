@@ -26,7 +26,7 @@ for i in range(steps):
 	pyrosim.Set_Motor_For_Joint(bodyIndex = robotId,
 								jointName = b'Torso_BackLeg',
 								controlMode =  p.POSITION_CONTROL,
-								targetPosition = 0.0,
+								targetPosition = -np.pi/4,
 								maxForce = 500)
 	p.stepSimulation()
 	# print(i)
