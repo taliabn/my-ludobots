@@ -15,8 +15,12 @@ planeId = p.loadURDF("plane.urdf") # floor
 robotId = p.loadURDF("body.urdf") # floor
 p.loadSDF("world.sdf")
 
+# initialize arrays
 backLegSensorValues = np.zeros(steps)
 frontLegSensorValues = np.zeros(steps)
+targetAngles = np.sin(np.linspace(0, 2*np.pi, steps))
+np.save("./data/sinValues", targetAngles)
+exit()
 
 pyrosim.Prepare_To_Simulate(robotId)
 # run simulation
