@@ -19,7 +19,8 @@ p.loadSDF("world.sdf")
 backLegSensorValues = np.zeros(steps)
 frontLegSensorValues = np.zeros(steps)
 targetAngles = np.sin(np.linspace(0, 2*np.pi, steps))
-np.save("./data/sinValues", targetAngles)
+targetAngles*=np.pi/4
+np.save("./data/targetAngles", targetAngles)
 exit()
 
 pyrosim.Prepare_To_Simulate(robotId)
