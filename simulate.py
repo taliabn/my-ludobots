@@ -1,3 +1,4 @@
+import random
 import time
 import numpy as np
 import pybullet_data # type: ignore
@@ -28,13 +29,13 @@ for i in range(steps):
 	pyrosim.Set_Motor_For_Joint(bodyIndex = robotId,
 								jointName = b'Torso_BackLeg',
 								controlMode =  p.POSITION_CONTROL,
-								targetPosition = -np.pi/4,
-								maxForce = 500)
+								targetPosition = (-np.pi/2) + random.random()*np.pi,
+								maxForce = 25)
 	pyrosim.Set_Motor_For_Joint(bodyIndex = robotId,
 								jointName = b'Torso_FrontLeg',
 								controlMode =  p.POSITION_CONTROL,
-								targetPosition = np.pi/4,
-								maxForce = 500)
+								targetPosition = (-np.pi/2) + random.random()*np.pi,
+								maxForce = 25)
 	p.stepSimulation()
 	# print(i)
 p.disconnect()
