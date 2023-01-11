@@ -7,10 +7,6 @@ import pyrosim.pyrosim as pyrosim
 
 # number of times to step through simulation
 steps = 1000
-# motor control constants
-amplitude = np.pi/4
-frequency = 10
-phaseOffset = 0
 
 physicsClient = p.connect(p.GUI)
 p.setAdditionalSearchPath(pybullet_data.getDataPath())
@@ -22,10 +18,20 @@ p.loadSDF("world.sdf")
 # initialize arrays
 backLegSensorValues = np.zeros(steps)
 frontLegSensorValues = np.zeros(steps)
-targetAngles = [amplitude * np.sin((2*np.pi*frequency * i/steps) + phaseOffset)
+# motor control constants for each leg
+amplitudeBackLeg = np.pi/4
+frequencyBackLeg = 10
+phaseOffsetBackLeg = 0
+amplitudeFrontLeg = np.pi/4
+frequencyFrontLeg = 10
+phaseOffsetFrontLeg = 0
+# motor control angles for each leg
+targetAnglesBackLeg = [amplitudeBackLeg * np.sin((2*np.pi*frequencyBackLeg * i/steps) + phaseOffsetBackLeg)
 					for i in range(steps)]
-np.save("./data/targetAngles", targetAngles)
-exit()
+targetAnglesFrontLeg = [amplitudeFrontLeg * np.sin((2*np.pi*frequencyFrontLeg * i/steps) + phaseOffsetFrontLeg)
+					for i in range(steps)]
+# np.save("./data/targetAngles", targetAngles)
+# exit()
 
 pyrosim.Prepare_To_Simulate(robotId)
 # run simulation
@@ -38,12 +44,12 @@ for i in range(steps):
 	pyrosim.Set_Motor_For_Joint(bodyIndex = robotId,
 								jointName = b'Torso_BackLeg',
 								controlMode =  p.POSITION_CONTROL,
-								targetPosition = targetAngles[i],
+								targetPosition = targetAnglesBackLeg[i],
 								maxForce = 25)
 	pyrosim.Set_Motor_For_Joint(bodyIndex = robotId,
 								jointName = b'Torso_FrontLeg',
 								controlMode =  p.POSITION_CONTROL,
-								targetPosition = targetAngles[i],
+								targetPosition = targetAnglesFrontLeg[i],
 								maxForce = 25)
 	p.stepSimulation()
 	# print(i)
