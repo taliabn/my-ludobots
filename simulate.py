@@ -21,7 +21,7 @@ frontLegSensorValues = np.zeros(steps)
 # motor control constants for each leg
 amplitudeBackLeg = np.pi/4
 frequencyBackLeg = 10
-phaseOffsetBackLeg = 0
+phaseOffsetBackLeg = np.pi/4
 amplitudeFrontLeg = np.pi/4
 frequencyFrontLeg = 10
 phaseOffsetFrontLeg = 0
@@ -30,8 +30,9 @@ targetAnglesBackLeg = [amplitudeBackLeg * np.sin((2*np.pi*frequencyBackLeg * i/s
 					for i in range(steps)]
 targetAnglesFrontLeg = [amplitudeFrontLeg * np.sin((2*np.pi*frequencyFrontLeg * i/steps) + phaseOffsetFrontLeg)
 					for i in range(steps)]
-# np.save("./data/targetAngles", targetAngles)
-# exit()
+np.save("./data/targetAnglesBackLeg", targetAnglesBackLeg)
+np.save("./data/targetAnglesFrontLeg", targetAnglesFrontLeg)
+exit()
 
 pyrosim.Prepare_To_Simulate(robotId)
 # run simulation

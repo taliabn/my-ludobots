@@ -10,6 +10,10 @@ matplotlib.pyplot.legend()
 matplotlib.pyplot.show()
 
 # read and plot targetAngles
-targetAngles = np.load("data/targetAngles.npy")
-matplotlib.pyplot.plot(targetAngles)
+targetAnglesBackLeg = np.load("data/targetAnglesBackLeg.npy")
+targetAnglesFrontLeg = np.load("data/targetAnglesFrontLeg.npy")
+matplotlib.pyplot.plot(targetAnglesBackLeg, label="BackLeg Target Angles", lw=3)
+matplotlib.pyplot.plot(targetAnglesFrontLeg, label="FrontLeg Target Angles", lw=1)
+matplotlib.pyplot.legend()
 matplotlib.pyplot.show()
+
