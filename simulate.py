@@ -4,9 +4,8 @@ import numpy as np
 import pybullet_data # type: ignore
 import pybullet as p # type: ignore
 import pyrosim.pyrosim as pyrosim
+import constants as c
 
-# number of times to step through simulation
-steps = 1000
 
 physicsClient = p.connect(p.GUI)
 p.setAdditionalSearchPath(pybullet_data.getDataPath())
@@ -16,27 +15,21 @@ robotId = p.loadURDF("body.urdf") # floor
 p.loadSDF("world.sdf")
 
 # initialize arrays
-backLegSensorValues = np.zeros(steps)
-frontLegSensorValues = np.zeros(steps)
-# motor control constants for each leg
-amplitudeBackLeg = np.pi/4
-frequencyBackLeg = 10
-phaseOffsetBackLeg = np.pi/8
-amplitudeFrontLeg = np.pi/4
-frequencyFrontLeg = 10
-phaseOffsetFrontLeg = np.pi/6
+backLegSensorValues = np.zeros(c.steps)
+frontLegSensorValues = np.zeros(c.steps)
+
 # motor control angles for each leg
-targetAnglesBackLeg = [amplitudeBackLeg * np.sin((2*np.pi*frequencyBackLeg * i/steps) + phaseOffsetBackLeg)
-					for i in range(steps)]
-targetAnglesFrontLeg = [amplitudeFrontLeg * np.sin((2*np.pi*frequencyFrontLeg * i/steps) + phaseOffsetFrontLeg)
-					for i in range(steps)]
+targetAnglesBackLeg = [c.amplitudeBackLeg * np.sin((2*np.pi*c.frequencyBackLeg * i/c.steps) + c.phaseOffsetBackLeg)
+					for i in range(c.steps)]
+targetAnglesFrontLeg = [c.amplitudeFrontLeg * np.sin((2*np.pi*c.frequencyFrontLeg * i/c.steps) + c.phaseOffsetFrontLeg)
+					for i in range(c.steps)]
 # np.save("./data/targetAnglesBackLeg", targetAnglesBackLeg)
 # np.save("./data/targetAnglesFrontLeg", targetAnglesFrontLeg)
 # exit()
 
 pyrosim.Prepare_To_Simulate(robotId)
 # run simulation
-for i in range(steps):
+for i in range(c.steps):
 	time.sleep(1/60)
 	# add sensors
 	backLegSensorValues[i] = pyrosim.Get_Touch_Sensor_Value_For_Link("BackLeg")
