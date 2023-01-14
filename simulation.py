@@ -38,3 +38,8 @@ class SIMULATION:
 		# 								maxForce = 25)
 			p.stepSimulation()
 			print(i)
+
+	# destructor
+	def __del__(self):
+
+		p.disconnect()	
