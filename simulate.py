@@ -9,7 +9,7 @@ from simulation import SIMULATION
 
 
 simulation = SIMULATION()
-
+simulation.Run()
 
 # # initialize arrays
 # backLegSensorValues = np.zeros(c.steps)
@@ -24,25 +24,7 @@ simulation = SIMULATION()
 # # np.save("./data/targetAnglesFrontLeg", targetAnglesFrontLeg)
 # # exit()
 
-# # run simulation
-# for i in range(c.steps):
-# 	time.sleep(1/60)
-# 	# add sensors
-# 	backLegSensorValues[i] = pyrosim.Get_Touch_Sensor_Value_For_Link("BackLeg")
-# 	frontLegSensorValues[i] = pyrosim.Get_Touch_Sensor_Value_For_Link("FrontLeg")
-# 	# add motors
-# 	pyrosim.Set_Motor_For_Joint(bodyIndex = robotId,
-# 								jointName = b'Torso_BackLeg',
-# 								controlMode =  p.POSITION_CONTROL,
-# 								targetPosition = targetAnglesBackLeg[i],
-# 								maxForce = 25)
-# 	pyrosim.Set_Motor_For_Joint(bodyIndex = robotId,
-# 								jointName = b'Torso_FrontLeg',
-# 								controlMode =  p.POSITION_CONTROL,
-# 								targetPosition = targetAnglesFrontLeg[i],
-# 								maxForce = 25)
-# 	p.stepSimulation()
-# 	# print(i)
+
 # p.disconnect()
 # np.save("./data/backLegSensorValues", backLegSensorValues)
 # np.save("./data/frontLegSensorValues", frontLegSensorValues)
