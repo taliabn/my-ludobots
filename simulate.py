@@ -10,12 +10,6 @@ from simulation import SIMULATION
 
 simulation = SIMULATION()
 
-# physicsClient = p.connect(p.GUI)
-# p.setAdditionalSearchPath(pybullet_data.getDataPath())
-# p.setGravity(0,0,-9.8)
-# planeId = p.loadURDF("plane.urdf") # floor
-# robotId = p.loadURDF("body.urdf") # floor
-# p.loadSDF("world.sdf")
 
 # # initialize arrays
 # backLegSensorValues = np.zeros(c.steps)
@@ -30,7 +24,6 @@ simulation = SIMULATION()
 # # np.save("./data/targetAnglesFrontLeg", targetAnglesFrontLeg)
 # # exit()
 
-# pyrosim.Prepare_To_Simulate(robotId)
 # # run simulation
 # for i in range(c.steps):
 # 	time.sleep(1/60)
