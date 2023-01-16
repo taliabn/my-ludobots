@@ -16,15 +16,18 @@ class SIMULATION:
 		self.world = WORLD()
 		self.robot = ROBOT()
 
-		pyrosim.Prepare_To_Simulate(self.robot.robotId)
+		# pyrosim.Prepare_To_Simulate(self.robot.robotId)
+
 
 	# runs simulation
-	def Run():
+	def Run(self):
 		for i in range(c.steps):
 			time.sleep(1/60)
+			p.stepSimulation()
+			self.robot.Sense(i)
+			print(i)
+		###
 		# 	# add sensors
-		# 	backLegSensorValues[i] = pyrosim.Get_Touch_Sensor_Value_For_Link("BackLeg")
-		# 	frontLegSensorValues[i] = pyrosim.Get_Touch_Sensor_Value_For_Link("FrontLeg")
 		# 	# add motors
 		# 	pyrosim.Set_Motor_For_Joint(bodyIndex = robotId,
 		# 								jointName = b'Torso_BackLeg',
@@ -36,8 +39,8 @@ class SIMULATION:
 		# 								controlMode =  p.POSITION_CONTROL,
 		# 								targetPosition = targetAnglesFrontLeg[i],
 		# 								maxForce = 25)
-			p.stepSimulation()
-			print(i)
+		###
+
 
 	# destructor
 	def __del__(self):

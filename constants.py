@@ -1,7 +1,7 @@
 import numpy as np
 
 # number of times to step through simulation
-steps = 1000
+steps = 40
 
 # motor control constants for each leg
 amplitudeBackLeg = np.pi/2

@@ -11,10 +11,6 @@ from simulation import SIMULATION
 simulation = SIMULATION()
 simulation.Run()
 
-# # initialize arrays
-# backLegSensorValues = np.zeros(c.steps)
-# frontLegSensorValues = np.zeros(c.steps)
-
 # # motor control angles for each leg
 # targetAnglesBackLeg = [c.amplitudeBackLeg * np.sin((2*np.pi*c.frequencyBackLeg * i/c.steps) + c.phaseOffsetBackLeg)
 # 					for i in range(c.steps)]
