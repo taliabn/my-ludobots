@@ -8,7 +8,7 @@ def Create_World():
 	pyrosim.End()
 
 
-def Create_Robot():
+def Generate_Body():
 	pyrosim.Start_URDF("body.urdf") # stores description of robot's body
 	width, length, height = 1, 1, 1 # link dimensions
 
@@ -22,6 +22,19 @@ def Create_Robot():
 	pyrosim.Send_Cube(name="FrontLeg", pos=[0.5, 0, -0.5] , size=[length, height, width])
 
 	pyrosim.End()
+
+
+def Generate_Brain():
+	pyrosim.Start_NeuralNetwork("brain.nndf") # stores description of neural network
+
+	pyrosim.Send_Sensor_Neuron(name = 0 , linkName = "Torso")
+
+	pyrosim.End()
+
+
+def Create_Robot():
+	Generate_Body()
+	Generate_Brain()
 
 
 Create_World()
