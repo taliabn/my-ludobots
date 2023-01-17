@@ -7,6 +7,7 @@ def Create_World():
 	pyrosim.Send_Cube(name="Box", pos=[-2, -2, 0.5] , size=[width, length, height])
 	pyrosim.End()
 
+
 def Create_Robot():
 	pyrosim.Start_URDF("body.urdf") # stores description of robot's body
 	width, length, height = 1, 1, 1 # link dimensions

@@ -6,6 +6,7 @@ import pyrosim.pyrosim as pyrosim
 import time
 import constants as c
 
+
 class SIMULATION:
 
 	def __init__(self):
@@ -31,6 +32,7 @@ class SIMULATION:
 
 		for sensor in self.robot.sensors.values():
 			sensor.Save_Values()
+
 
 	# destructor
 	def __del__(self):
