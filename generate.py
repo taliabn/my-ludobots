@@ -28,6 +28,8 @@ def Generate_Brain():
 	pyrosim.Start_NeuralNetwork("brain.nndf") # stores description of neural network
 
 	pyrosim.Send_Sensor_Neuron(name = 0 , linkName = "Torso")
+	pyrosim.Send_Sensor_Neuron(name = 1 , linkName = "BackLeg")
+	pyrosim.Send_Sensor_Neuron(name = 2 , linkName = "FrontLeg")
 
 	pyrosim.End()
 
