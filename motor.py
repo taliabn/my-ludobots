@@ -13,8 +13,9 @@ class MOTOR:
 
 	def Prepare_to_Act(self):
 		self.amplitude = c.amplitudeBackLeg
-		self.frequency = c.frequencyBackLeg
 		self.offset = c.phaseOffsetBackLeg
+		self.frequency = c.frequencyBackLeg
+		
 		self.motorValues = [self.amplitude * np.sin((2*np.pi*self.frequency * i/c.steps) + self.offset)
 					for i in range(c.steps)]
 
@@ -28,5 +29,5 @@ class MOTOR:
 
 
 	def Save_Values(self):
-		file_path = join("data", self.jointName.decode() + "MotorValues")
+		file_path = join("data", self.jointName.decode() + "-MotorValues")
 		np.save(file_path, self.motorValues)							

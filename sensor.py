@@ -15,6 +15,6 @@ class SENSOR:
 		self.values[i] = val
 
 	def Save_Values(self):
-		file_path = join("data", self.linkName + "SensorValues")
+		file_path = join("data", self.linkName + "-SensorValues")
 		np.save(file_path, self.values)
 
