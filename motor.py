@@ -2,6 +2,7 @@ import numpy as np
 import constants as c
 import pyrosim.pyrosim as pyrosim
 import pybullet as p # type: ignore
+from os.path import join
 
 
 class MOTOR:
@@ -24,3 +25,8 @@ class MOTOR:
 									controlMode =  p.POSITION_CONTROL,
 									targetPosition = self.motorValues[i],
 									maxForce = 25)		
+
+
+	def Save_Values(self):
+		file_path = join("data", self.jointName.decode() + "MotorValues")
+		np.save(file_path, self.motorValues)							

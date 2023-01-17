@@ -26,6 +26,11 @@ class SIMULATION:
 			self.robot.Act(i)
 			print(i)
 
+		for motor in self.robot.motors.values():
+			motor.Save_Values()
+
+		for sensor in self.robot.sensors.values():
+			sensor.Save_Values()
 
 	# destructor
 	def __del__(self):
