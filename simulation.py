@@ -16,8 +16,6 @@ class SIMULATION:
 		self.world = WORLD()
 		self.robot = ROBOT()
 
-		# pyrosim.Prepare_To_Simulate(self.robot.robotId)
-
 
 	# runs simulation
 	def Run(self):
@@ -25,21 +23,8 @@ class SIMULATION:
 			time.sleep(1/60)
 			p.stepSimulation()
 			self.robot.Sense(i)
+			self.robot.Act(i)
 			print(i)
-		###
-		# 	# add sensors
-		# 	# add motors
-		# 	pyrosim.Set_Motor_For_Joint(bodyIndex = robotId,
-		# 								jointName = b'Torso_BackLeg',
-		# 								controlMode =  p.POSITION_CONTROL,
-		# 								targetPosition = targetAnglesBackLeg[i],
-		# 								maxForce = 25)
-		# 	pyrosim.Set_Motor_For_Joint(bodyIndex = robotId,
-		# 								jointName = b'Torso_FrontLeg',
-		# 								controlMode =  p.POSITION_CONTROL,
-		# 								targetPosition = targetAnglesFrontLeg[i],
-		# 								maxForce = 25)
-		###
 
 
 	# destructor
