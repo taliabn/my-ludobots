@@ -3,6 +3,7 @@ from robot import ROBOT
 import pybullet_data # type: ignore
 import pybullet as p # type: ignore
 import pyrosim.pyrosim as pyrosim
+# from pyrosim.neuralNetwork import NEURAL_NETWORK
 import time
 import constants as c
 
@@ -24,6 +25,7 @@ class SIMULATION:
 			time.sleep(1/60)
 			p.stepSimulation()
 			self.robot.Sense(i)
+			self.robot.Think()
 			self.robot.Act(i)
 			print(i)
 
