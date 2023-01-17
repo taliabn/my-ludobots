@@ -1,6 +1,6 @@
 import math
 
-import pybullet
+import pybullet  # type: ignore
 
 import pyrosim.pyrosim as pyrosim
 
@@ -8,116 +8,121 @@ import pyrosim.constants as c
 
 class NEURON: 
 
-    def __init__(self,line):
+	def __init__(self,line):
 
-        self.Determine_Name(line)
+		self.Determine_Name(line)
 
-        self.Determine_Type(line)
+		self.Determine_Type(line)
 
-        self.Search_For_Link_Name(line)
+		self.Search_For_Link_Name(line)
 
-        self.Search_For_Joint_Name(line)
+		self.Search_For_Joint_Name(line)
 
-        self.Set_Value(0.0)
+		self.Set_Value(0.0)
 
-    def Add_To_Value( self, value ):
+	def Add_To_Value( self, value ):
 
-        self.Set_Value( self.Get_Value() + value )
+		self.Set_Value( self.Get_Value() + value )
 
-    def Get_Joint_Name(self):
+	def Get_Joint_Name(self):
 
-        return self.jointName
+		return self.jointName
 
-    def Get_Link_Name(self):
+	def Get_Link_Name(self):
 
-        return self.linkName
+		return self.linkName
 
-    def Get_Name(self):
+	def Get_Name(self):
 
-        return self.name
+		return self.name
 
-    def Get_Value(self):
+	def Get_Value(self):
 
-        return self.value
+		return self.value
 
-    def Is_Sensor_Neuron(self):
+	def Is_Sensor_Neuron(self):
 
-        return self.type == c.SENSOR_NEURON
+		return self.type == c.SENSOR_NEURON
 
-    def Is_Hidden_Neuron(self):
+	def Is_Hidden_Neuron(self):
 
-        return self.type == c.HIDDEN_NEURON
+		return self.type == c.HIDDEN_NEURON
 
-    def Is_Motor_Neuron(self):
+	def Is_Motor_Neuron(self):
 
-        return self.type == c.MOTOR_NEURON
+		return self.type == c.MOTOR_NEURON
 
-    def Print(self):
+	def Print(self):
 
-        # self.Print_Name()
+		# self.Print_Name()
 
-        # self.Print_Type()
+		# self.Print_Type()
 
-        self.Print_Value()
+		self.Print_Value()
 
-        # print("")
+		# print("")
 
-    def Set_Value(self,value):
+	def Set_Value(self,value):
 
-        self.value = value
+		self.value = value
+
+	def Update_Sensor_Neuron(self):
+		val = pyrosim.Get_Touch_Sensor_Value_For_Link(self.Get_Link_Name())
+		self.Set_Value(val)
+
 
 # -------------------------- Private methods -------------------------
 
-    def Determine_Name(self,line):
+	def Determine_Name(self,line):
 
-        if "name" in line:
+		if "name" in line:
 
-            splitLine = line.split('"')
+			splitLine = line.split('"')
 
-            self.name = splitLine[1]
+			self.name = splitLine[1]
 
-    def Determine_Type(self,line):
+	def Determine_Type(self,line):
 
-        if "sensor" in line:
+		if "sensor" in line:
 
-            self.type = c.SENSOR_NEURON
+			self.type = c.SENSOR_NEURON
 
-        elif "motor" in line:
+		elif "motor" in line:
 
-            self.type = c.MOTOR_NEURON
+			self.type = c.MOTOR_NEURON
 
-        else:
+		else:
 
-            self.type = c.HIDDEN_NEURON
+			self.type = c.HIDDEN_NEURON
 
-    def Print_Name(self):
+	def Print_Name(self):
 
-       print(self.name)
+		print(self.name)
+	   
+	def Print_Type(self):
 
-    def Print_Type(self):
+		print(self.type)
+	
+	def Print_Value(self):
 
-       print(self.type)
+		print(self.value , " " , end="" )
 
-    def Print_Value(self):
+	def Search_For_Joint_Name(self,line):
 
-       print(self.value , " " , end="" )
+		if "jointName" in line:
 
-    def Search_For_Joint_Name(self,line):
+			splitLine = line.split('"')
 
-        if "jointName" in line:
+			self.jointName = splitLine[5]
 
-            splitLine = line.split('"')
+	def Search_For_Link_Name(self,line):
 
-            self.jointName = splitLine[5]
+		if "linkName" in line:
 
-    def Search_For_Link_Name(self,line):
+			splitLine = line.split('"')
 
-        if "linkName" in line:
+			self.linkName = splitLine[5]
 
-            splitLine = line.split('"')
+	def Threshold(self):
 
-            self.linkName = splitLine[5]
-
-    def Threshold(self):
-
-        self.value = math.tanh(self.value)
+		self.value = math.tanh(self.value)
