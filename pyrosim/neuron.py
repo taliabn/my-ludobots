@@ -71,7 +71,7 @@ class NEURON:
 		self.Set_Value(val)
 
 	def Update_Hidden_Or_Motor_Neuron(self):
-		self.Set_Value(0)
+		self.Set_Value(math.pi/4)
 		
 
 
