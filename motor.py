@@ -11,27 +11,9 @@ class MOTOR:
 		self.jointName = jointName
 
 
-	def Prepare_to_Act(self):
-		self.amplitude = c.amplitudeBackLeg
-		self.offset = c.phaseOffsetBackLeg
-
-		if self.jointName.decode() == "Torso_FrontLeg":
-			self.frequency = 0.5*c.frequencyBackLeg
-		else:
-			self.frequency = c.frequencyBackLeg
-		
-		self.motorValues = [self.amplitude * np.sin((2*np.pi*self.frequency * i/c.steps) + self.offset)
-					for i in range(c.steps)]
-
-
 	def Set_Value(self, robot, desiredAngle):
 		pyrosim.Set_Motor_For_Joint(bodyIndex = robot.robotId,
 									jointName = self.jointName,
 									controlMode =  p.POSITION_CONTROL,
 									targetPosition = desiredAngle,
 									maxForce = 25)		
-
-
-	def Save_Values(self):
-		file_path = join("data", self.jointName.decode() + "-MotorValues")
-		np.save(file_path, self.motorValues)							
