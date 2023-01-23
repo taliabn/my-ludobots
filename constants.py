@@ -2,12 +2,8 @@ import numpy as np
 
 
 # number of times to step through simulation
-steps = 10
-
+steps = 30
+# length of each time-step in seconds
+stepLength = 1/60
 # motor control constants for each leg
-amplitudeBackLeg = np.pi/4
-frequencyBackLeg = 1
-phaseOffsetBackLeg = 0
-amplitudeFrontLeg = np.pi/4
-frequencyFrontLeg = 1
-phaseOffsetFrontLeg = 0
+numberOfGenerations = 2
