@@ -13,7 +13,12 @@ class SOLUTION:
 		self.Create_World()
 		self.Generate_Body()
 		self.Generate_Brain()
+
 		os.system("python simulate.py")
+
+		fitnessFile = "./data/fitness.txt"
+		with open(fitnessFile, "r") as f:
+			self.fitness = float(f.read())
 
 
 	def Create_World(self):
