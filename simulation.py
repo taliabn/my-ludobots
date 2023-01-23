@@ -33,6 +33,11 @@ class SIMULATION:
 			sensor.Save_Values()
 
 
+	# gets final position of robot
+	def Get_Fitness(self):
+		self.robot.Get_Fitness()
+
+
 	# destructor
 	def __del__(self):
 
