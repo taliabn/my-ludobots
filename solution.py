@@ -11,12 +11,12 @@ class SOLUTION:
 		self.weights = self.weights *2 - 1 # scale to range [-1, 1]
 
 	
-	def Evaluate(self):
+	def Evaluate(self, directOrGUI):
 		self.Create_World()
 		self.Generate_Body()
 		self.Generate_Brain()
 
-		os.system("python simulate.py")
+		os.system(f"python simulate.py {directOrGUI}")
 
 		fitnessFile = "./data/fitness.txt"
 		with open(fitnessFile, "r") as f:
