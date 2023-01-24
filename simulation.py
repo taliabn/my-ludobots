@@ -27,7 +27,7 @@ class SIMULATION:
 			self.robot.Sense(i)
 			self.robot.Think()
 			self.robot.Act(i)
-			print(i)
+			# print(i)
 
 		for sensor in self.robot.sensors.values():
 			sensor.Save_Values()
