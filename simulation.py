@@ -6,7 +6,7 @@ import pyrosim.pyrosim as pyrosim
 # from pyrosim.neuralNetwork import NEURAL_NETWORK
 import time
 import constants as c
-
+# stopped after 45
 
 class SIMULATION:
 
@@ -39,8 +39,8 @@ class SIMULATION:
 
 
 	# gets final position of robot
-	def Get_Fitness(self):
-		self.robot.Get_Fitness()
+	def Get_Fitness(self, solutionID):
+		self.robot.Get_Fitness(solutionID)
 
 
 	# destructor

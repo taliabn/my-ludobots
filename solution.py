@@ -2,6 +2,7 @@ import pyrosim.pyrosim as pyrosim
 import numpy as np
 import os
 import random
+import time
 
 
 class SOLUTION:
@@ -18,10 +19,12 @@ class SOLUTION:
 		self.Generate_Brain()
 		IDstr = str(self.myID)
 		os.system("start /B python simulate.py " + directOrGUI + " " + IDstr) # specific to windows
-
-		fitnessFile = "./data/fitness.txt"
-		with open(fitnessFile, "r") as f:
+		fitnessFileName  = f"./data/fitness{self.myID}.txt"
+		while not os.path.exists(fitnessFileName): # do not know if previous simulation finished and fitness file is ready
+			time.sleep(0.01)
+		with open(fitnessFileName, "r") as f:
 			self.fitness = float(f.read())
+		print(self.fitness)
 
 
 	def Create_World(self):
@@ -73,4 +76,3 @@ class SOLUTION:
 
 	def Set_ID(self, newID):
 		self.myID = newID
-	# stopped after 32
