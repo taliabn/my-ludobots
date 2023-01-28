@@ -18,7 +18,7 @@ class PARALLEL_HILL_CLIMBER:
 		pyrosim.Start_SDF("world.sdf")
 		pyrosim.End()
 
-		
+
 		for i in range(c.populationSize):
 			self.parents[i] = SOLUTION(self.nextAvailableID)
 			self.nextAvailableID += 1
@@ -41,7 +41,8 @@ class PARALLEL_HILL_CLIMBER:
 
 	def Evaluate(self, solutions):
 		for solution in solutions.values():
-			solution.Start_Simulation("DIRECT")
+			print(solution)
+			solution.Start_Simulation("GUI")
 		for solution in solutions.values():
 			solution.Wait_For_Simulation_To_End()
 			print(solution.fitness)
@@ -83,10 +84,16 @@ class PARALLEL_HILL_CLIMBER:
 		
 	
 	def Show_Best(self):
+		print("\nSTARTING SHOWING BEST\n")
 		winning_parent = self.parents[0]
 		winning_fitness = self.parents[0].fitness
 		for parent in self.parents.values():
 			if parent.fitness > winning_fitness:
 				winning_fitness = parent.fitness 
 				winning_parent = parent
+		print(f"winning parent: {winning_parent}")
 		winning_parent.Start_Simulation("GUI")
+		IDstr = str(winning_parent.myID)
+		# os.system("start /B python simulate.py GUI " + IDstr) # OS specific call
+
+		print("\nDONE SHOWING BEST\n")

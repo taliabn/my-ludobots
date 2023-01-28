@@ -11,13 +11,16 @@ import constants as c
 class SIMULATION:
 
 	def __init__(self, directOrGUI, solutionID):
-		self.directOrGUI = directOrGUI
-		if self.directOrGUI == "DIRECT":
+		print(f"\ninitializing simulation with mode {directOrGUI}\n")
+		if directOrGUI == "DIRECT":
 			self.physicsClient = p.connect(p.DIRECT)
 			self.stepTime = 0
-		else:
+		elif directOrGUI == "GUI":
 			self.physicsClient = p.connect(p.GUI)
 			self.stepTime = c.stepLength
+		else:
+			print("ERROR: invalid run mode")
+			exit()
 		p.setAdditionalSearchPath(pybullet_data.getDataPath())
 		p.setGravity(0,0,-9.8)
 		self.world = WORLD()
@@ -33,7 +36,7 @@ class SIMULATION:
 			self.robot.Think()
 			self.robot.Act(i)
 			# print(i)
-
+		
 		# for sensor in self.robot.sensors.values():
 		# 	sensor.Save_Values()
 
