@@ -12,18 +12,22 @@ class SOLUTION:
 		self.weights = self.weights *2 - 1 # scale to range [-1, 1]
 		self.myID = ID
 
-	
-	def Evaluate(self, directOrGUI):
+	# formerly in Evaluate
+	def Start_Simulation(self, directOrGUI):
 		self.Create_World()
 		self.Generate_Body()
 		self.Generate_Brain()
 		IDstr = str(self.myID)
-		os.system("start /B python simulate.py " + directOrGUI + " " + IDstr) # specific to windows
-		fitnessFileName  = f"./data/fitness{self.myID}.txt"
-		while not os.path.exists(fitnessFileName): # do not know if previous simulation finished and fitness file is ready
+		os.system("start /B python simulate.py " + directOrGUI + " " + IDstr) # OS specific call
+
+	# formerly in Evaluate
+	def Wait_For_Simulation_To_End(self, directOrGUI):
+		while not os.path.exists("fitness" + str(self.myID) + ".txt"): # do not know if previous simulation finished and fitness file is ready
 			time.sleep(0.01)
+		fitnessFileName  = f"fitness{self.myID}.txt"
 		with open(fitnessFileName, "r") as f:
 			self.fitness = float(f.read())
+		os.remove(fitnessFileName) # OS specific call
 		print(self.fitness)
 
 

@@ -14,7 +14,7 @@ class ROBOT:
 		self.Prepare_To_Sense()
 		self.Prepare_to_Act()
 		self.nn = NEURAL_NETWORK(f"brain{solutionID}.nndf")
-		os.system("rm brain" + solutionID + ".nndf")
+		os.system("rm brain" + solutionID + ".nndf") # OS specific call
 
 
 	def Prepare_To_Sense(self):
@@ -50,10 +50,9 @@ class ROBOT:
 		stateOfLinkZero = p.getLinkState(self.robotId, 0)
 		positionOfLinkZero = stateOfLinkZero[0]
 		xCoordinateOfLinkZero = positionOfLinkZero[0]
-		tmpFileName = f"./data/tmp{solutionID}.txt"
+		tmpFileName = f"tmp{solutionID}.txt"
 		with open(tmpFileName, "w") as f:
 			f.write(str(xCoordinateOfLinkZero))
-		fitnessFileName	 = f"./data/fitness{solutionID}.txt"
-		os.system("mv " + tmpFileName + " " + fitnessFileName)
-		# exit()
-
+		fitnessFileName	 = f"fitness{solutionID}.txt"
+		os.rename(tmpFileName, fitnessFileName)
+		exit()
