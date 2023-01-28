@@ -16,7 +16,7 @@ class SOLUTION:
 		self.Generate_Body()
 		self.Generate_Brain()
 
-		os.system(f"python simulate.py {directOrGUI}")
+		os.system("start /B python simulate.py " + directOrGUI ) # specific to windows
 
 		fitnessFile = "./data/fitness.txt"
 		with open(fitnessFile, "r") as f:
