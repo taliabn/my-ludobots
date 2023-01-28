@@ -3,10 +3,9 @@ from robot import ROBOT
 import pybullet_data # type: ignore
 import pybullet as p # type: ignore
 import pyrosim.pyrosim as pyrosim
-# from pyrosim.neuralNetwork import NEURAL_NETWORK
 import time
 import constants as c
-# stopped after 45
+
 
 class SIMULATION:
 
@@ -35,10 +34,6 @@ class SIMULATION:
 			self.robot.Sense(i)
 			self.robot.Think()
 			self.robot.Act(i)
-			# print(i)
-		
-		# for sensor in self.robot.sensors.values():
-		# 	sensor.Save_Values()
 
 
 	# gets final position of robot
