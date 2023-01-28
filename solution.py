@@ -3,12 +3,13 @@ import numpy as np
 import os
 import random
 import time
+import constants as c
 
 
 class SOLUTION:
 
 	def __init__(self, ID):
-		self.weights = np.random.rand(3,2)
+		self.weights = np.random.rand(c.numSensorNeurons, c.numMotorNeurons)
 		self.weights = self.weights *2 - 1 # scale to range [-1, 1]
 		self.myID = ID
 
@@ -65,9 +66,9 @@ class SOLUTION:
 		pyrosim.Send_Motor_Neuron(name = 3, jointName = "Torso_BackLeg")
 		pyrosim.Send_Motor_Neuron(name = 4, jointName = "Torso_FrontLeg")
 		# create synapses
-		for currentRow in range(3):
-			for currentColumn in range(2):
-				pyrosim.Send_Synapse(sourceNeuronName = currentRow , targetNeuronName = currentColumn + 3 , weight = self.weights[currentRow][currentColumn])
+		for currentRow in range(c.numSensorNeurons):
+			for currentColumn in range(c.numMotorNeurons):
+				pyrosim.Send_Synapse(sourceNeuronName = currentRow , targetNeuronName = currentColumn + c.numSensorNeurons, weight = self.weights[currentRow][currentColumn])
 
 		pyrosim.End()
 
