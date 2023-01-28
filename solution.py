@@ -6,17 +6,18 @@ import random
 
 class SOLUTION:
 
-	def __init__(self):
+	def __init__(self, ID):
 		self.weights = np.random.rand(3,2)
 		self.weights = self.weights *2 - 1 # scale to range [-1, 1]
+		self.myID = ID
 
 	
 	def Evaluate(self, directOrGUI):
 		self.Create_World()
 		self.Generate_Body()
 		self.Generate_Brain()
-
-		os.system("start /B python simulate.py " + directOrGUI ) # specific to windows
+		IDstr = str(self.myID)
+		os.system("start /B python simulate.py " + directOrGUI + " " + IDstr) # specific to windows
 
 		fitnessFile = "./data/fitness.txt"
 		with open(fitnessFile, "r") as f:
@@ -47,7 +48,7 @@ class SOLUTION:
 
 
 	def Generate_Brain(self):
-		pyrosim.Start_NeuralNetwork("brain.nndf") # stores description of neural network
+		pyrosim.Start_NeuralNetwork(f"brain{self.myID}.nndf") # stores description of neural network
 
 		# create sensor neurons
 		pyrosim.Send_Sensor_Neuron(name = 0, linkName = "Torso")
@@ -69,3 +70,7 @@ class SOLUTION:
 		randomRow = random.randint(0, 2)
 		randomColumn = random.randint(0, 1)
 		self.weights[randomRow][randomColumn] = random.random() * 2 - 1
+
+	def Set_ID(self, newID):
+		self.myID = newID
+	# stopped after 32
