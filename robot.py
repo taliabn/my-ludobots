@@ -55,4 +55,4 @@ class ROBOT:
 			f.write(str(xCoordinateOfLinkZero))
 		fitnessFileName	 = f"fitness{solutionID}.txt"
 		os.rename(tmpFileName, fitnessFileName)
-		exit()
+		# exit()

@@ -14,14 +14,14 @@ class SOLUTION:
 
 	# formerly in Evaluate
 	def Start_Simulation(self, directOrGUI):
-		self.Create_World()
 		self.Generate_Body()
 		self.Generate_Brain()
 		IDstr = str(self.myID)
+		# os.system("python simulate.py " + directOrGUI + " " + IDstr)
 		os.system("start /B python simulate.py " + directOrGUI + " " + IDstr) # OS specific call
 
 	# formerly in Evaluate
-	def Wait_For_Simulation_To_End(self, directOrGUI):
+	def Wait_For_Simulation_To_End(self):
 		while not os.path.exists("fitness" + str(self.myID) + ".txt"): # do not know if previous simulation finished and fitness file is ready
 			time.sleep(0.01)
 		fitnessFileName  = f"fitness{self.myID}.txt"

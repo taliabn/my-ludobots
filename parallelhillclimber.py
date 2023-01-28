@@ -9,11 +9,16 @@ import pyrosim.pyrosim as pyrosim
 
 class PARALLEL_HILL_CLIMBER:
 	def __init__(self):
-		os.system("rm brain*.nndf")
-		os.system("rm fitness*.txt")
+		# os.system("rm brain*.nndf")
+		# os.system("rm fitness*.txt")
 
 		self.parents = {}
 		self.nextAvailableID = 0
+
+		pyrosim.Start_SDF("world.sdf")
+		pyrosim.End()
+
+		
 		for i in range(c.populationSize):
 			self.parents[i] = SOLUTION(self.nextAvailableID)
 			self.nextAvailableID += 1
@@ -36,9 +41,9 @@ class PARALLEL_HILL_CLIMBER:
 
 	def Evaluate(self, solutions):
 		for solution in solutions.values():
-			solution.Start_Simulation("direct")
+			solution.Start_Simulation("DIRECT")
 		for solution in solutions.values():
-			solution.Wait_For_Simulation_To_End("direct")
+			solution.Wait_For_Simulation_To_End()
 			print(solution.fitness)
 	
 
@@ -48,7 +53,6 @@ class PARALLEL_HILL_CLIMBER:
 			self.children[i] = copy.deepcopy(parent)
 			self.children[i].Set_ID(self.nextAvailableID)
 			self.nextAvailableID += 1
-		pass
 
 	
 	def Mutate(self):
@@ -61,7 +65,6 @@ class PARALLEL_HILL_CLIMBER:
 		for key in self.parents.keys():
 			if self.parents[key].fitness > self.children[key].fitness:
 				self.parents[key] = self.children[key]
-		pass
 
 
 	def WriteToLog(self):
