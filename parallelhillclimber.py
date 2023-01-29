@@ -8,7 +8,7 @@ import pyrosim.pyrosim as pyrosim
 
 class PARALLEL_HILL_CLIMBER:
 	def __init__(self):
-		os.system("rm brain*.nndf")
+		# os.system("rm brain*.nndf")
 		os.system("rm fitness*.txt")
 
 		self.parents = {}
@@ -39,11 +39,11 @@ class PARALLEL_HILL_CLIMBER:
 
 	def Evaluate(self, solutions):
 		for solution in solutions.values():
-			print(solution)
+			# print(solution)
 			solution.Start_Simulation("DIRECT")
 		for solution in solutions.values():
 			solution.Wait_For_Simulation_To_End()
-			print(solution.fitness)
+			# print(solution.fitness)
 	
 
 	def Spawn(self):
@@ -76,15 +76,15 @@ class PARALLEL_HILL_CLIMBER:
 		
 	def Print(self):
 		for key in self.parents.keys():
-			print(f"\n{key}: parent's fitness = {self.parents[key].fitness}, child's fitness: {self.children[key].fitness}\n")
+			print(f"parent's fitness = {self.parents[key].fitness}, child's fitness: {self.children[key].fitness}\n")
 		
 	
 	def Show_Best(self):
 		winning_parent = self.parents[0]
 		winning_fitness = self.parents[0].fitness
 		for parent in self.parents.values():
-			if parent.fitness > winning_fitness:
+			if parent.fitness < winning_fitness:
 				winning_fitness = parent.fitness 
 				winning_parent = parent
-		print(f"winning parent: {winning_parent}")
+		# print(f"winning parent: {winning_parent}")
 		winning_parent.Start_Simulation("GUI")

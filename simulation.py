@@ -10,7 +10,7 @@ import constants as c
 class SIMULATION:
 
 	def __init__(self, directOrGUI, solutionID):
-		print(f"\ninitializing simulation with mode {directOrGUI}\n")
+		# print(f"\ninitializing simulation with mode {directOrGUI}\n")
 		if directOrGUI == "DIRECT":
 			self.physicsClient = p.connect(p.DIRECT)
 			self.stepTime = 0
