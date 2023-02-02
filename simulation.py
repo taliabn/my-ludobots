@@ -29,6 +29,10 @@ class SIMULATION:
 
 	# runs simulation
 	def Run(self):
+		# give cubes time to drop
+		for i in range(50):
+			time.sleep(self.stepTime)
+			p.stepSimulation()
 		for i in range(c.steps):
 			time.sleep(self.stepTime)
 			p.stepSimulation()

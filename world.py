@@ -15,6 +15,11 @@ class WORLD:
 	# writes to "world.sdf"
 	def Create_World(self):
 		pyrosim.Start_SDF("world.sdf")
-		width, length, height = 1, 1, 1 # box dimensions
-		pyrosim.Send_Cube(name="Box", pos=[-2, -2, 0.5] , size=[width, length, height], mass=20)
+		length, height = 8, 0.5 # box dimensions
+		x, y, z = -6, 0, 0.5 # box starting position
+		for k in range(5):
+			length -= k*0.75
+			pyrosim.Send_Cube(name="Box", pos=[x, y, z*k + height] , 
+									size=[length, length, height] , mass=50) 
+									# make pyramid heavy enough that robot cannot move it
 		pyrosim.End()
