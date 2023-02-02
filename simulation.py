@@ -22,7 +22,8 @@ class SIMULATION:
 			exit()
 		p.setAdditionalSearchPath(pybullet_data.getDataPath())
 		p.setGravity(0,0,-9.8)
-		self.world = WORLD()
+		# only writes new world for first simulation (solutionID=0)
+		self.world = WORLD(initial_world = not int(solutionID)) 
 		self.robot = ROBOT(solutionID)
 
 

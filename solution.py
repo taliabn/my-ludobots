@@ -30,13 +30,6 @@ class SOLUTION:
 		# print(self.fitness)
 
 
-	def Create_World(self):
-		pyrosim.Start_SDF("world.sdf")
-		width, length, height = 1, 1, 1 # box dimensions
-		pyrosim.Send_Cube(name="Box", pos=[-2, -2, 0.5] , size=[width, length, height])
-		pyrosim.End()
-
-
 	def Generate_Body(self):
 		pyrosim.Start_URDF("body.urdf") # stores description of robot's body
 		width, length, height = 1, 1, 1 # link dimensions
