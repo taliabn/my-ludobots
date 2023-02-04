@@ -50,7 +50,7 @@ class ROBOT:
 	def Get_Fitness(self, solutionID):
 		basePositionAndOrientation = p.getBasePositionAndOrientation(self.robotId)
 		basePosition = basePositionAndOrientation[0]
-		print(f"BASE POSITION {basePosition}\n") # [x, y, z]
+		# print(f"BASE POSITION {basePosition}\n") # [x, y, z]
 		fitness = self.Calculate_Fitness(basePosition)
 		tmpFileName = f"tmp{solutionID}.txt"
 		with open(tmpFileName, "w") as f:
