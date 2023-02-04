@@ -85,5 +85,5 @@ class PARALLEL_HILL_CLIMBER:
 			if parent.Get_Fitness() < winning_fitness:
 				winning_fitness = parent.Get_Fitness() 
 				winning_parent = parent
-		print(f"BEST FINAL FITNESS: {winning_fitness}")
+		print(f"winning fitness: {winning_fitness}")
 		winning_parent.Start_Simulation("GUI")
