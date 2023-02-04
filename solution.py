@@ -31,6 +31,10 @@ class SOLUTION:
 		# print(self.fitness)
 
 
+	def Get_Fitness(self):
+		return self.fitness
+
+
 	def Generate_Body(self):
 		pyrosim.Start_URDF("body.urdf") # stores description of robot's body
 		width, length, height = 1, 1, 1 # link dimensions

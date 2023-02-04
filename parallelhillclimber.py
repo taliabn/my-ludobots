@@ -58,9 +58,8 @@ class PARALLEL_HILL_CLIMBER:
 		for child in self.children.values():
 			child.Mutate()
 
-	
+	# want fitness to be as close to zero as possible
 	def Select(self):
-		# parent's fitness is worse than child's
 		for key in self.parents.keys():
 			if self.parents[key].fitness > self.children[key].fitness:
 				self.parents[key] = self.children[key]
@@ -81,10 +80,10 @@ class PARALLEL_HILL_CLIMBER:
 	
 	def Show_Best(self):
 		winning_parent = self.parents[0]
-		winning_fitness = self.parents[0].fitness
+		winning_fitness = self.parents[0].Get_Fitness()
 		for parent in self.parents.values():
-			if parent.fitness < winning_fitness:
-				winning_fitness = parent.fitness 
+			if parent.Get_Fitness() < winning_fitness:
+				winning_fitness = parent.Get_Fitness() 
 				winning_parent = parent
 		# print(f"winning parent: {winning_parent}")
 		winning_parent.Start_Simulation("GUI")
