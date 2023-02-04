@@ -50,9 +50,17 @@ class ROBOT:
 	def Get_Fitness(self, solutionID):
 		basePositionAndOrientation = p.getBasePositionAndOrientation(self.robotId)
 		basePosition = basePositionAndOrientation[0]
-		xPosition = basePosition[0]
+		print(f"BASE POSITION {basePosition}\n") # [x, y, z]
+		fitness = self.Calculate_Fitness(basePosition)
 		tmpFileName = f"tmp{solutionID}.txt"
 		with open(tmpFileName, "w") as f:
-			f.write(str(xPosition))
+			f.write(str(fitness))
 		fitnessFileName	 = f"fitness{solutionID}.txt"
 		os.rename(tmpFileName, fitnessFileName)
+
+	# returns euclidean distance to top, center point on pyramid
+	def Calculate_Fitness(self, basePosition):
+		link_x, link_y, link_z = basePosition
+		return ((c.pyramid_x - link_x)**2 + 
+	  			link_y**2 + 
+	  			(c.layer_height*c.num_pyramid_layers - link_z)**2)**0.5
