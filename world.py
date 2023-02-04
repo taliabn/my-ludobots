@@ -17,7 +17,7 @@ class WORLD:
 	def Create_World(self):
 		pyrosim.Start_SDF("world.sdf")
 		length = c.pyramid_length
-		for k in range(c.pyramid_layers):
+		for k in range(c.num_pyramid_layers):
 			length -= k*0.75
 			pyrosim.Send_Cube(name="Box", pos=[c.pyramid_x, 0, c.layer_height*(k+1)] , 
 									size=[length, length, c.layer_height] , mass=50) 
