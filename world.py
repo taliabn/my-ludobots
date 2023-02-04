@@ -1,5 +1,6 @@
 import pybullet as p # type: ignore
 import pyrosim.pyrosim as pyrosim
+import constants as c
 
 
 class WORLD:
@@ -15,11 +16,10 @@ class WORLD:
 	# writes to "world.sdf"
 	def Create_World(self):
 		pyrosim.Start_SDF("world.sdf")
-		length, height = 8, 0.5 # box dimensions
-		x, y, z = -6, 0, 0.5 # box starting position
-		for k in range(5):
+		length = c.pyramid_length
+		for k in range(c.pyramid_layers):
 			length -= k*0.75
-			pyrosim.Send_Cube(name="Box", pos=[x, y, z*k + height] , 
-									size=[length, length, height] , mass=50) 
+			pyrosim.Send_Cube(name="Box", pos=[c.pyramid_x, 0, c.layer_height*(k+1)] , 
+									size=[length, length, c.layer_height] , mass=50) 
 									# make pyramid heavy enough that robot cannot move it
 		pyrosim.End()

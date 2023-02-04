@@ -9,3 +9,8 @@ stepLength = 1/60
 numSensorNeurons = 9
 numMotorNeurons = 8
 motorJointRange = 0.2
+# pyramid dimensions
+pyramid_x = -6
+pyramid_layers = 5
+pyramid_length = 8
+layer_height = 0.5
