@@ -1,16 +1,18 @@
 # number of evolutions
-populationSize = 15
-numberOfGenerations = 15
+populationSize = 10
+numberOfGenerations = 100
 # number of times to step through simulation
-steps = 1000
+steps = 3000
 # length of each time-step in seconds
-stepLength = 1/60
+stepLength = 1/360
 # nn properties
-numSensorNeurons = 9
-numMotorNeurons = 8
-motorJointRange = 0.2
+numSensorNeurons = 4
+numHiddenNeurons = 4
+numMotorNeurons = 4
+motorJointRange = 1
 # pyramid dimensions
-pyramid_x = -7
-num_pyramid_layers = 5
-pyramid_length = 8
-layer_height = 0.5
+gap_width = 1.75
+pyramid_x = -7.75
+num_pyramid_layers = 10
+pyramid_length = 15
+layer_height = 0.1
