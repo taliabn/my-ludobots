@@ -24,7 +24,7 @@ class SIMULATION:
 		p.setGravity(0,0,-9.8)
 		# only writes new world for first simulation (solutionID=0)
 		self.world = WORLD(initial_world = not int(solutionID)) 
-		self.robot = ROBOT(solutionID)
+		self.robot = ROBOT(directOrGUI, solutionID)
 
 
 	# runs simulation

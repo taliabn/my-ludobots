@@ -3,19 +3,25 @@ import pyrosim.pyrosim as pyrosim
 from pyrosim.neuralNetwork import NEURAL_NETWORK
 from sensor import SENSOR
 from motor import MOTOR
+from datetime import datetime
 import os
 import constants as c
 
 class ROBOT:
 
-	def __init__(self, solutionID):
+	def __init__(self, directOrGUI, solutionID):
 
 		self.robotId = p.loadURDF("body.urdf") # floor
 		pyrosim.Prepare_To_Simulate(self.robotId)
 		self.Prepare_To_Sense()
 		self.Prepare_to_Act()
 		self.nn = NEURAL_NETWORK(f"brain{solutionID}.nndf")
-		os.system("rm brain" + solutionID + ".nndf") # OS specific call
+		if directOrGUI == "DIRECT": 
+			os.system("rm brain" + solutionID + ".nndf") # OS specific call
+		if directOrGUI == 'GUI':
+			timestamp =  datetime.now().strftime("%m%d%H%M%S")
+			copy_command = f"cp brain{solutionID}.nndf brain{solutionID}-{timestamp}.nndf"
+			os.system(copy_command)
 
 
 	def Prepare_To_Sense(self):
@@ -64,3 +70,4 @@ class ROBOT:
 		return ((c.pyramid_x - link_x)**2 + 
 	  			link_y**2 + 
 	  			(c.layer_height*c.num_pyramid_layers - link_z)**2)**0.5
+		# return -link_x
