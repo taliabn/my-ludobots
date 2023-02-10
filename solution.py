@@ -38,23 +38,23 @@ class SOLUTION:
 		pyrosim.Start_URDF("body.urdf") # stores description of robot's body
 
 		# joint naming convention: Parent_Child
-		pyrosim.Send_Cube(name="Torso", pos=[0, 0, 0.75] , size=[0.5, 0.5, 0.5])
+		pyrosim.Send_Cube(name="Torso", pos=[0, 0, 0.75] , size=[0.5, 0.5, 0.5],color="Blue")
 
 		pyrosim.Send_Joint( name = "Torso_BackLeg" , parent= "Torso" , child = "BackLeg" , 
 							type = "revolute", position = [0.25, 0, 0.5], jointAxis = "1 0 0") # absolute
-		pyrosim.Send_Cube(name="BackLeg", pos=[0.25, 0.25, -0.25] , size=[0.5, 0.5, 0.5])
+		pyrosim.Send_Cube(name="BackLeg", pos=[0.25, 0.25, -0.25] , size=[0.5, 0.5, 0.5], color="Green")
 
 		pyrosim.Send_Joint(name = "Torso_FrontLeg" , parent= "Torso" , child = "FrontLeg" , 
 							type = "revolute", position = [0.-25, 0, 0.5], jointAxis = "1 0 0") # absolute
-		pyrosim.Send_Cube(name="FrontLeg", pos=[0.25, 0.25, -0.25] , size=[0.5, 0.5, 0.5]) # relative
+		pyrosim.Send_Cube(name="FrontLeg", pos=[0.25, 0.25, -0.25] , size=[0.5, 0.5, 0.5],color="Green") # relative
 
 		pyrosim.Send_Joint(name = "Torso_LeftLeg" , parent= "Torso" , child = "LeftLeg" , 
 							type = "revolute", position = [0.25, 0, 0.5], jointAxis = "1 0 0") # absolute
-		pyrosim.Send_Cube(name="LeftLeg", pos=[-0.25, -0.25, -0.25] , size=[0.5, 0.5, 0.5]) # relative
+		pyrosim.Send_Cube(name="LeftLeg", pos=[-0.25, -0.25, -0.25] , size=[0.5, 0.5, 0.5],color="Green") # relative
 
 		pyrosim.Send_Joint(name = "Torso_RightLeg" , parent= "Torso" , child = "RightLeg" , 
 							type = "revolute", position = [-0.25, 0, 0.5], jointAxis = "1 0 0") # absolute
-		pyrosim.Send_Cube(name="RightLeg", pos=[-0.25, -0.25, -0.25] , size=[0.5, 0.5, 0.5]) # relative
+		pyrosim.Send_Cube(name="RightLeg", pos=[-0.25, -0.25, -0.25] , size=[0.5, 0.5, 0.5],color="Green") # relative
 
 		pyrosim.End()
 
