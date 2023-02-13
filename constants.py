@@ -7,7 +7,9 @@ steps = 1000
 stepLength = 1/360
 # nn properties
 numHiddenNeurons = 4
+# motor properties
 motorJointRange = 1
+maxMotorForce = 50
 # pyramid dimensions
 gap_width = 1.75
 pyramid_x = -7.75
