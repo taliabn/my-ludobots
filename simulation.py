@@ -16,6 +16,7 @@ class SIMULATION:
 			self.stepTime = 0
 		elif directOrGUI == "GUI":
 			self.physicsClient = p.connect(p.GUI)
+			p.configureDebugVisualizer(p.COV_ENABLE_GUI,0)
 			self.stepTime = c.stepLength
 		else:
 			print("ERROR: invalid run mode")
