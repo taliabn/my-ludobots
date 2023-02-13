@@ -43,15 +43,11 @@ class ROBOT:
 
 	def Prepare_to_Act(self):
 		self.motors = {}
-		# print(f"\njointNamesToIndices: {pyrosim.jointNamesToIndices}\n")
 		for jointName in pyrosim.jointNamesToIndices:
 			self.motors[jointName.decode()] = MOTOR(jointName)
-		# print(f"motors: {self.motors}\n")
 
 
 	def Act(self, i):
-		# print(f"\nself.nn.get_neuron_names : {self.nn.Get_Neuron_Names()}\n")
-		# print(self.motors)
 		for neuronName in self.nn.Get_Neuron_Names():
 			if self.nn.Is_Motor_Neuron(neuronName):
 				jointName = self.nn.Get_Motor_Neurons_Joint(neuronName)
@@ -61,12 +57,11 @@ class ROBOT:
 
 	def Think(self):
 		self.nn.Update()
-		# self.nn.Print()
+
 
 	def Get_Fitness(self, solutionID):
 		basePositionAndOrientation = p.getBasePositionAndOrientation(self.robotId)
 		basePosition = basePositionAndOrientation[0]
-		# print(f"BASE POSITION {basePosition}\n") # [x, y, z]
 		fitness = self.Calculate_Fitness(basePosition)
 		tmpFileName = f"tmp{solutionID}.txt"
 		with open(tmpFileName, "w") as f:
@@ -74,10 +69,10 @@ class ROBOT:
 		fitnessFileName	 = f"fitness{solutionID}.txt"
 		os.rename(tmpFileName, fitnessFileName)
 
+
 	# returns euclidean distance to top, center point on pyramid
 	def Calculate_Fitness(self, basePosition):
 		link_x, link_y, link_z = basePosition
 		return ((c.pyramid_x - link_x)**2 + 
 	  			link_y**2 + 
 	  			(c.layer_height*c.num_pyramid_layers - link_z)**2)**0.5
-		# return -link_x
