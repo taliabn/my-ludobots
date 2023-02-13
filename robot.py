@@ -13,20 +13,26 @@ class ROBOT:
 
 		self.robotId = p.loadURDF("body.urdf") # floor
 		pyrosim.Prepare_To_Simulate(self.robotId)
+		self.nn = NEURAL_NETWORK(f"brain{solutionID}.nndf")
 		self.Prepare_To_Sense()
 		self.Prepare_to_Act()
-		self.nn = NEURAL_NETWORK(f"brain{solutionID}.nndf")
-		if directOrGUI == "DIRECT": 
-			os.system("rm brain" + solutionID + ".nndf") # OS specific call
-		if directOrGUI == 'GUI':
-			timestamp =  datetime.now().strftime("%m%d%H%M%S")
-			copy_command = f"cp brain{solutionID}.nndf brain{solutionID}-{timestamp}.nndf"
-			os.system(copy_command)
+		# if directOrGUI == "DIRECT": 
+		os.system("rm brain" + solutionID + ".nndf") # OS specific call
+		# if directOrGUI == 'GUI':
+		# 	timestamp =  datetime.now().strftime("%m%d%H%M%S")
+		# 	copy_command = f"cp brain{solutionID}.nndf brain{solutionID}-{timestamp}.nndf"
+		# 	os.system(copy_command)
+
+
+	def Prepare_To_Sense_old(self):
+		self.sensors = {}
+		for linkName in pyrosim.linkNamesToIndices:
+			self.sensors[linkName] = SENSOR(linkName)		
 
 
 	def Prepare_To_Sense(self):
 		self.sensors = {}
-		for linkName in pyrosim.linkNamesToIndices:
+		for linkName in self.nn.Get_Sensor_Neurons_Links():
 			self.sensors[linkName] = SENSOR(linkName)		
 
 
@@ -37,11 +43,15 @@ class ROBOT:
 
 	def Prepare_to_Act(self):
 		self.motors = {}
+		# print(f"\njointNamesToIndices: {pyrosim.jointNamesToIndices}\n")
 		for jointName in pyrosim.jointNamesToIndices:
 			self.motors[jointName.decode()] = MOTOR(jointName)
+		# print(f"motors: {self.motors}\n")
 
 
 	def Act(self, i):
+		# print(f"\nself.nn.get_neuron_names : {self.nn.Get_Neuron_Names()}\n")
+		# print(self.motors)
 		for neuronName in self.nn.Get_Neuron_Names():
 			if self.nn.Is_Motor_Neuron(neuronName):
 				jointName = self.nn.Get_Motor_Neurons_Joint(neuronName)
