@@ -11,7 +11,7 @@ class ROBOT:
 
 	def __init__(self, directOrGUI, solutionID):
 
-		self.robotId = p.loadURDF("body.urdf") # floor
+		self.robotId = p.loadURDF(f"body{solutionID}.urdf") # floor
 		pyrosim.Prepare_To_Simulate(self.robotId)
 		self.nn = NEURAL_NETWORK(f"brain{solutionID}.nndf")
 		self.Prepare_To_Sense()
@@ -73,6 +73,7 @@ class ROBOT:
 	# returns euclidean distance to top, center point on pyramid
 	def Calculate_Fitness(self, basePosition):
 		link_x, link_y, link_z = basePosition
-		return ((c.pyramid_x - link_x)**2 + 
-	  			link_y**2 + 
-	  			(c.layer_height*c.num_pyramid_layers - link_z)**2)**0.5
+		# return ((c.pyramid_x - link_x)**2 + 
+	  	# 		link_y**2 + 
+	  	# 		(c.layer_height*c.num_pyramid_layers - link_z)**2)**0.5
+		return - link_x
