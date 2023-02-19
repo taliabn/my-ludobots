@@ -41,10 +41,14 @@ class BODY:
 							  	  for instruction in self.dna]
 		self.sensorLinks = [] # listof node names (str)
 		self.allLinks = []
+		self.availableID = 0
 		self.numLinks = 1 # root
 		self.Generate_Body()
 		self.numSensorNeurons = len(self.sensorLinks)
 
+	def fetchID(self):
+		self.availableID += 1
+		return self.availableID
 
 	def switchDirection(self, dir, orientation):
 		orientation *= -1
@@ -57,7 +61,7 @@ class BODY:
 
 	def Generate_Body(self):
 		# function to recursively add links
-		def add_link(prevUniqueNode,  prevClone, prevChild, currUniqueNode, currClone, currChild, growthDir):
+		def add_link(prevUniqueNode,  prevClone, prevChild, prevLinkName, currUniqueNode, currClone, currChild, growthDir):
 			# print(locals(), "\n")
 			currNode = self.uniqueNodeList[currUniqueNode]
 			prevNode = self.uniqueNodeList[prevUniqueNode]
@@ -65,8 +69,8 @@ class BODY:
 			currJointPos = prevNode.dims * (prevNode.orientation + currNode.orientation) * growthDir 
 			currLinkPos = currNode.dims * (currNode.orientation) * growthDir
 
-			prevLinkName = f"{prevUniqueNode}A{prevClone}A{prevChild}"
-			currLinkName = f"{currUniqueNode}A{currClone}A{currChild}"
+			currLinkName = f"{currUniqueNode}-{self.fetchID()}"
+			# print(f"CURR: {currLinkName} ")
 			print(f"{prevLinkName}_{currLinkName}" )
 			pyrosim.Send_Joint(name=f"{prevLinkName}_{currLinkName}" , 
 							   parent=f"{prevLinkName}",
@@ -86,8 +90,8 @@ class BODY:
 
 			# recursive call(s) to add clones
 			if currClone < currNode.numSelfEdge :
-
-				add_link(prevUniqueNode = currUniqueNode, prevClone = currClone, prevChild = currClone,
+				newName = self.fetchID()
+				add_link(prevUniqueNode = currUniqueNode, prevClone = currClone, prevChild = currClone, prevLinkName = currLinkName, 
 						 currUniqueNode = currUniqueNode, currClone = currClone + 1, currChild = currChild,
 						 growthDir = growthDir)
 			# recursive call(s) to add children
@@ -97,27 +101,30 @@ class BODY:
 					if child == 1:
 						newDir = self.switchDirection(dir=growthDir, orientation=currNode.orientation)
 					else:
-						newDir = growthDir					
-					add_link(prevUniqueNode = currUniqueNode, prevClone = currClone, prevChild = currClone,
-							currUniqueNode = currUniqueNode + 1, currClone = currClone, currChild = child,
+						newDir = growthDir	
+					
+									
+					add_link(prevUniqueNode = currUniqueNode, prevClone = currClone, prevChild = currClone, prevLinkName  = currLinkName, 
+							currUniqueNode = currUniqueNode + 1, currClone = 0, currChild = child,
 							growthDir = newDir)
 
-		pyrosim.Start_URDF(f"body{self.myID}.urdf") # stores description of robot's body
+		# pyrosim.Start_URDF(f"body{self.myID}.urdf") # stores description of robot's body
+		pyrosim.Start_URDF(f"body.urdf") # stores description of robot's body
 		print(f"body{self.myID}.urdf")
 		# add root link
 		currNode = self.uniqueNodeList[0]
 		# LINK NAMING CONVENTION: uniqueNodeIndex-self-child	
-		pyrosim.Send_Cube(name="0A0A0", 
+		pyrosim.Send_Cube(name="0-0", 
 						  pos=currNode.dims/2, 
 						  size=currNode.dims, 
 						  color="Green")
 		# root link always has a sensor, even if uniqueNode 0 does not
-		self.sensorLinks.append("0A0A0")
+		self.sensorLinks.append("0-0")
 		growthDir = [1,1,1]
 		# add clones
 		# print(currNode.numChildEdge, currNode.numSelfEdge, currNode)
 		if currNode.numSelfEdge > 0:
-			add_link(prevUniqueNode = 0, prevClone = 0, prevChild = 0,
+			add_link(prevUniqueNode = 0, prevClone = 0, prevChild = 0, prevLinkName = "0-0", 
 						currUniqueNode = 0, currClone = 1, currChild = 0,
 						growthDir = growthDir)
 		# add children
@@ -129,7 +136,7 @@ class BODY:
 					newDir = self.switchDirection(dir=growthDir, orientation=currNode.orientation)
 				else:
 					newDir = growthDir
-				add_link(prevUniqueNode = 0, prevClone = 0, prevChild = 0,
+				add_link(prevUniqueNode = 0, prevClone = 0, prevChild = 0, prevLinkName = "0-0", 
 							currUniqueNode = 1, currClone = 0, currChild = child,
 							growthDir = newDir)
 		print("\n\nESCAPED RECURSION\n")
