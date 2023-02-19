@@ -12,16 +12,11 @@ class SOLUTION:
 	def __init__(self, ID):
 		self.dna = [[3,2],[1,1]]	
 		self.myID = ID
-		self.body = BODY(self.dna, self.myID)
-		self.Generate_Random_Brain()
-		# self.sensorLinks = []
-		# self.numLinks = random.randint(2, c.maxNumLinks)
-		
 
 
 	def Start_Simulation(self, directOrGUI):
-		# self.body = BODY(self.dna, self.myID)
-		# self.Generate_Random_Brain()
+		self.body = BODY(self.dna, self.myID)
+		self.Generate_Random_Brain()
 		IDstr = str(self.myID)
 		os.system("start /B python simulate.py " + directOrGUI + " " + IDstr) # OS specific call
 
@@ -103,7 +98,7 @@ class SOLUTION:
 	def Mutate(self):
 		randomRow = random.randint(0, c.numHiddenNeurons - 1)
 		# change weight of a random sensor neuron synapse, if at least one exists
-		if self.numSensorNeurons > 0:
+		if self.body.numSensorNeurons > 0:
 			randomSensorColumn = random.randint(0, self.body.numSensorNeurons - 1)
 			self.weights[0][randomRow][randomSensorColumn] = random.random() * 2 - 1
 		# change weight of a random motor neuron synapse
