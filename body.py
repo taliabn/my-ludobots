@@ -7,13 +7,18 @@ import constants as c
 
 class uniqueNode:
 
-	def __init__(self, numSelfEdge, numChildEdge, orientation):
+	def __init__(self, numSelfEdge, numChildEdge, orientationsQueue):
 		# from dna:
 		self.numSelfEdge: int = numSelfEdge
 		self.numChildEdge: int = numChildEdge
 		# randomly chosen:
 		self.has_sensor: bool = bool(random.getrandbits(1)) # random
-		self.orientation = orientation # random
+
+		# get random orientation that isn't the previous one
+		self.orientation = orientationsQueue.pop(0)
+		random.shuffle(orientationsQueue)
+		orientationsQueue.append(self.orientation)
+
 		# possibly change min/max side length to be encoded in dna?
 		# dimensions
 		# self.l, self.w, self.h: float = [random.uniform(c.minSideLen, c.maxSideLen)
@@ -39,8 +44,11 @@ class BODY:
 		print("INITIALIZING BODY CLASS INSTANCE")
 		self.myID = ID
 		self.dna = dna # list of [num selfEdges, num nextEdges] pairs
+		orientationsQueue = [np.array([1,0,0]), np.array([0,1,0]), np.array([0,0,1])]
+		# orientationsQueue = [np.array([1,0,0]), np.array([0,1,0])]
+		random.shuffle(orientationsQueue)
 		# initialize graph nodes
-		self.uniqueNodeList = [uniqueNode(instruction[0], instruction[1], self.randomOrientation())
+		self.uniqueNodeList = [uniqueNode(instruction[0], instruction[1], orientationsQueue)
 							  	  for instruction in self.dna]
 		for node in self.uniqueNodeList:
 			node.Print()
@@ -60,10 +68,6 @@ class BODY:
 		return np.logical_not(orientation)*dir + orientation*-1
 
 
-	def randomOrientation(self):
-		return np.array(random.choice([[0,1,0], [1,0,0], [0,0,1]]))
-
-
 	def Generate_Body(self):
 		# function to recursively add links
 		def add_link(prevUniqueNode,  prevClone, prevChild, prevLinkName, currUniqueNode, currClone, currChild, growthDir):
@@ -71,16 +75,25 @@ class BODY:
 			currNode = self.uniqueNodeList[currUniqueNode]
 			prevNode = self.uniqueNodeList[prevUniqueNode]
 
+			# branch in new growth direction along orientation if
+					# this is the second child
+					# and going in a new orientation
+			if currChild == 1:  
+				if (prevNode.orientation != currNode.orientation).all():
+					return # this link would be positioned directly in the previous link
+				growthDir = self.switchDirection(dir=growthDir, orientation=currNode.orientation)
+
+
 			currJointPos = (prevNode.orientation + currNode.orientation)  * prevNode.dims/2 * growthDir 
 			currLinkPos = (currNode.orientation) * currNode.dims/2 * growthDir
 			# currJointPos =  (prevNode.orientation + currNode.orientation) * prevNode.dims/2
 			# currLinkPos =  (currNode.orientation) * currNode.dims/2
 
 			currLinkName = f"{currUniqueNode}-{self.fetchID()}"
-			# print(f"CURR: {currLinkName} ")
-			print(f"{prevLinkName}_{currLinkName}" )
-			print(f"currJointPos: {currJointPos}" )
-			print(f"currLinkPos: {currLinkPos}" )
+			# # print(f"CURR: {currLinkName} ")
+			# print(f"{prevLinkName}_{currLinkName}" )
+			# print(f"currJointPos: {currJointPos}" )
+			# print(f"currLinkPos: {currLinkPos}" )
 			pyrosim.Send_Joint(name=f"{prevLinkName}_{currLinkName}" , 
 							   parent=f"{prevLinkName}",
 							   child=f"{currLinkName}",
@@ -99,23 +112,22 @@ class BODY:
 
 			# recursive call(s) to add clones
 			if currClone < currNode.numSelfEdge :
-				newName = self.fetchID()
 				add_link(prevUniqueNode = currUniqueNode, prevClone = currClone, prevChild = currClone, prevLinkName = currLinkName, 
 						 currUniqueNode = currUniqueNode, currClone = currClone + 1, currChild = currChild,
 						 growthDir = growthDir)
 			# recursive call(s) to add children
 			if currUniqueNode + 1 < len(self.uniqueNodeList):
 				for child in range(currNode.numChildEdge):
-					# branch in new growth direction along orientation if this is the second child
-					if child == 1:
-						newDir = self.switchDirection(dir=growthDir, orientation=currNode.orientation)
-					else:
-						newDir = growthDir	
+					# # branch in new growth direction along orientation if this is the second child
+					# if child == 1:
+					# 	newDir = self.switchDirection(dir=growthDir, orientation=currNode.orientation)
+					# else:
+					# 	newDir = growthDir	
 					
 									
 					add_link(prevUniqueNode = currUniqueNode, prevClone = currClone, prevChild = currClone, prevLinkName  = currLinkName, 
 							currUniqueNode = currUniqueNode + 1, currClone = 0, currChild = child,
-							growthDir = newDir)
+							growthDir = growthDir)
 
 		# pyrosim.Start_URDF(f"body{self.myID}.urdf") # stores description of robot's body
 		pyrosim.Start_URDF(f"body.urdf") # stores description of robot's body
@@ -137,7 +149,7 @@ class BODY:
 						currUniqueNode = 0, currClone = 1, currChild = 0,
 						growthDir = growthDir)
 		# add children
-		if 2 < len(self.uniqueNodeList):
+		if 1 < len(self.uniqueNodeList):
 			for child in range(currNode.numChildEdge): # assumed to be 1 or 2
 
 				# branch in new growth direction along orientation if this is the second child
@@ -163,3 +175,5 @@ class BODY:
 	#linear each unique node only connects to one unique node (linear)
 	# root always has sensor
 	# 2 children edges max
+	# neighboring nodes always have diff orientations
+	
