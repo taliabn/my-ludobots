@@ -41,7 +41,6 @@ class uniqueNode:
 class BODY:
 
 	def __init__(self, dna, ID):
-		print("INITIALIZING BODY CLASS INSTANCE")
 		self.myID = ID
 		self.dna = dna # list of [num selfEdges, num nextEdges] pairs
 		orientationsQueue = [np.array([1,0,0]), np.array([0,1,0]), np.array([0,0,1])]
@@ -71,11 +70,10 @@ class BODY:
 
 
 	def switchDirection(self, dir, orientation):
-		# orientation *= -1
-		return np.logical_not(orientation)*dir + orientation*-1
+		return np.logical_not(orientation)*dir + orientation*-1 #type: ignore
 
 
-	def add_root(self, start_pos):
+	def add_root(self, start_pos, growth_dir):
 		# sim crashes if this size is [0,0,0], so make one dim arbitrarily small
 		# robot bounces if this dimension happens to be x, so we'll use z
 		pyrosim.Send_Cube(name="root", 
@@ -91,10 +89,12 @@ class BODY:
 		# first node always has sensor, ensure that body has at least one
 		# add first real link
 		currNode = self.uniqueNodeList[0]
+		currPos = growth_dir * currNode.orientation * currNode.dims/2
 		pyrosim.Send_Cube(name="0-0", 
-							pos=currNode.dims/2, 
+							pos=currPos,
 							size=currNode.dims, 
 							color=currNode.color)
+		print(f"0-0 link pos: {currPos}")
 		if currNode.has_sensor:
 			self.sensorLinks.append("0-0")	
 
@@ -114,11 +114,11 @@ class BODY:
 					return # this link would be positioned directly in the previous link
 				growthDir = self.switchDirection(dir=growthDir, orientation=currNode.orientation)
 
-			currJointPos = (prevNode.orientation + currNode.orientation)  * prevNode.dims/2 * growthDir 
-			currLinkPos = (currNode.orientation) * currNode.dims/2 * growthDir
+			currJointPos = (prevNode.orientation + currNode.orientation)  * (prevNode.dims/2) * growthDir 
+			currLinkPos = (currNode.orientation) * (currNode.dims/2)  * growthDir
 			
 			currLinkName = f"{currUniqueNode}-{self.fetchID()}"
-			# # print(f"CURR: {currLinkName} ")
+			# print(f"CURR: {currLinkName} ")
 			# print(f"{prevLinkName}_{currLinkName}" )
 			# print(f"currJointPos: {currJointPos}" )
 			# print(f"currLinkPos: {currLinkPos}" )
@@ -154,12 +154,11 @@ class BODY:
 		# pyrosim.Start_URDF(f"body{self.myID}.urdf") # stores description of robot's body
 		pyrosim.Start_URDF(f"body.urdf") # stores description of robot's body
 		
+		growthDir = [1, 1, -1]
 		# add dummy root link and first real link
-		self.add_root(start_pos=[0,0,3])
+		self.add_root(start_pos=[0,0,3], growth_dir=growthDir)
 		# add clones of first link
-		# print(currNode.numChildEdge, currNode.numSelfEdge, currNode)
 		currNode = self.uniqueNodeList[0]
-		growthDir = [1,1,1]
 		if currNode.numSelfEdge > 0:
 			add_link(prevUniqueNode = 0, prevClone = 0, prevChild = 0, prevLinkName = "0-0", 
 						currUniqueNode = 0, currClone = 1, currChild = 0,
@@ -171,17 +170,3 @@ class BODY:
 							currUniqueNode = 1, currClone = 0, currChild = child,
 							growthDir = growthDir)
 		pyrosim.End()
-
-
-# TODO:
-	# if leaf, add sensor
-	# joint types?
-	# consolidate randoms (random lib vs numpy)
-
-# tradeoffs:
-	# linear each unique node only connects to one unique node (linear)
-	# root always has sensor
-	# 2 children edges max
-	# neighboring nodes always have diff orientations
-	# can only branch at right angles
-	
