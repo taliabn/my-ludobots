@@ -35,7 +35,7 @@ See [r/ludobots: parallelhillclimber](https://www.reddit.com/r/ludobots/wiki/par
 ## Assignment 7: random 3D morphologies
 [Assignment 7](https://youtube.com/shorts/HM3KmLzGZqs?feature=share), found on the [`random-3D-bodies`](https://github.com/taliabn/my-ludobots/tree/random-3D-bodies) branch, adds the capability to randomly generate morphologies.
 
-#### Method to generate bodies
+### Method to generate bodies
 3D bodies are recursively generated using graph-based body plans, a mehod that is heavily influenced by [Karl Sims'](https://www.karlsims.com/evolved-virtual-creatures.html) work<sup>[1]</sup>.
 
 Properties of creatures are divided into two categories, those randomly generated for each creature and those determined by "DNA" genotype that identifies a general body plan. This means that it is *not* a direct encoding between phenotypes and genotypes. See Table 1  for a summary. The body plan genotype graph encodes the number of uniqe link types, number of children for each link, and number of clones of each link. Each unique link has its own link dimensions, joint axis, directionality, and presence of sensor and corresponding color. See Figure 1 for a summary of how body plans are generated. 
@@ -49,8 +49,9 @@ Properties of creatures are divided into two categories, those randomly generate
 
 Table 1. Summary of random vs encoded body part properties
 
-![figure explaining how a numerical encoding of a body plan is transformed into a virtual creature](".\figures\fig2-a7.png") 
-Figure 1. Body plan generation process
+![figure explaining how a numerical encoding of a body plan is transformed into a virtual creature]("https://github.com/taliabn/my-ludobots/blob/random-3D-body/figures/a7-fig2.png") 
+
+Figure 1. Body plan encoding to pheontype relationship
 
 Note that the indirect encoding mechanism has an important implication: a single genotype can lead to multiple phenotypes. 
 
@@ -66,7 +67,14 @@ To ensure that body plans follow basic laws of physics, before adding a link to 
 * 2 children edges per node maximum
 * can only branch at right angles
 * symmetry can limit the potential morphospace
-	
+
+### Method to generate brains
+Brains are generated with a structure resembling that of a traditional feed forward neural network. There is one sensor neuron for each link with a sensor and one motor neuron for each link. Sensor neurons are connected to a layer of hidden neurons which are then connected to motor neurons. All synsapses start with a random weight between -1 and 1. The number of sensor and motor neurons is specific to each body plan, and `numHiddenNeurons` can be specified in `constants.py`. See Fig. 2 for an example of brain structure.
+
+![figure illustrating brain structure that resembles a neural network]("https://github.com/taliabn/my-ludobots/blob/random-3D-body/figures/a7-fig1.png") 
+
+Figure 2. Structure of robot brains
+
 [1] "Evolving Virtual Creatures" K.Sims, Computer Graphics (Siggraph '94 Proceedings), July 1994, pp.15-22
 
 ## Assignment 6: random 1D morphologies
