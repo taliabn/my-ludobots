@@ -50,7 +50,7 @@ Note that the indirect encoding mechanism has an important implication: a single
 
 Table 1. Summary of random vs encoded body part properties
 
-![figure explaining how a numerical encoding of a body plan is transformed into a virtual creature]("https://github.com/taliabn/my-ludobots/blob/random-3D-body/figures/a7-fig2.png") 
+![figure explaining how a numerical encoding of a body plan is transformed into a virtual creature](/figures/a7-fig1.png) 
 
 Figure 1. Body plan encoding to pheontype relationship
 
@@ -71,7 +71,7 @@ To ensure that body plans follow basic laws of physics, before adding a link to 
 ### Method to generate brains
 Brains are generated with a structure resembling that of a traditional feed forward neural network. There is one sensor neuron for each link with a sensor and one motor neuron for each link. Sensor neurons are connected to a layer of hidden neurons which are then connected to motor neurons. All synsapses start with a random weight between -1 and 1. The number of sensor and motor neurons is specific to each body plan, and `numHiddenNeurons` can be specified in `constants.py`. See Fig. 2 for an example of brain structure.
 
-![figure illustrating brain structure that resembles a neural network]("https://github.com/taliabn/my-ludobots/blob/random-3D-body/figures/a7-fig1.png") 
+![figure illustrating structure that resembles a neural network](/figures/a7-fig2.png) 
 
 Figure 2. Structure of robot brains
 
