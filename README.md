@@ -38,8 +38,9 @@ See [r/ludobots: parallelhillclimber](https://www.reddit.com/r/ludobots/wiki/par
 ### Method to generate bodies
 3D bodies are recursively generated using graph-based body plans, a mehod that is heavily influenced by [Karl Sims'](https://www.karlsims.com/evolved-virtual-creatures.html) work<sup>[1]</sup>.
 
-Properties of creatures are divided into two categories, those randomly generated for each creature and those determined by "DNA" genotype that identifies a general body plan. This means that it is *not* a direct encoding between phenotypes and genotypes. See Table 1  for a summary. The body plan genotype graph encodes the number of uniqe link types, number of children for each link, and number of clones of each link. Each unique link has its own link dimensions, joint axis, directionality, and presence of sensor and corresponding color. See Figure 1 for a summary of how body plans are generated. 
+Properties of creatures are divided into two categories, those randomly generated for each creature and those determined by "DNA" genotype that identifies a general body plan. This means that it is *not* a direct encoding between phenotypes and genotypes. See Table 1  for a summary. The body plan genotype graph encodes the number of uniqe link types, number of children for each link, and number of clones of each link (self edges). Each unique link has its own link dimensions, joint axis, directionality, and presence of sensor and corresponding color. See Figure 1 for an example of how body plans are generated. 
 
+Note that the indirect encoding mechanism has an important implication: a single genotype can lead to multiple phenotypes. 
 
 | random | encoded |
 | ------ | ------- |
@@ -56,7 +57,6 @@ Figure 1. Body plan encoding to pheontype relationship
 Note that the indirect encoding mechanism has an important implication: a single genotype can lead to multiple phenotypes. 
 
 To ensure that body plans follow basic laws of physics, before adding a link to the body, we check that there is no existing link in the same absolute position, preventing overlapping body parts. This means that some links specified by the genotype may not end up in the final body. To allow for freer growth in the z-direction, the robot starts at an absolute position of [0,0,3] and drops to the ground when the simulation starts. Additionally, we check that the absolute z position of a link isn't negative (i.e below the floor) before adding it.
-
 
 #### Benefits:
 * Duplicated body parts create symmetry, which mimics nature
@@ -75,10 +75,20 @@ Brains are generated with a structure resembling that of a traditional feed forw
 
 Figure 2. Structure of robot brains
 
+#### Parameters
+The following parameters were used in the final simulations for this assignmment:
+* `maxNumNodes = 5`
+* `maxNumSelfEdges = 4`
+* `maxNumChildEdges = 2`
+* `minSideLen = 0.1`
+* `maxSideLen = 1`
 [1] "Evolving Virtual Creatures" K.Sims, Computer Graphics (Siggraph '94 Proceedings), July 1994, pp.15-22
 
 ## Assignment 6: random 1D morphologies
-[Assignment 6](https://youtu.be/uXb1K-MACNE), found on the [`random-1D-bodies`](https://github.com/taliabn/my-ludobots/tree/random-1D-bodies) branch, adds the capability to randomly generate morphologies. The robots consist of a chain of links on the floor connected by joints that can rotate around the z-axis. Touch sensors are placed on random links, and each link has a 50% chance of having a sensor. When running the simulation in GUI mode, links with sensors are colored green, and links without sensors are colored blue. Parameters dictating the range of link side lengths and the maximum number of links can be set in `constants.py`. There will always be a minimum of two links and one joint between them. The following parameters were used in the final simulations for this assignmment:
+[Assignment 6](https://youtu.be/uXb1K-MACNE), found on the [`random-1D-bodies`](https://github.com/taliabn/my-ludobots/tree/random-1D-bodies) branch, adds the capability to randomly generate morphologies. The robots consist of a chain of links on the floor connected by joints that can rotate around the z-axis. Touch sensors are placed on random links, and each link has a 50% chance of having a sensor. When running the simulation in GUI mode, links with sensors are colored green, and links without sensors are colored blue. Parameters dictating the range of link side lengths and the maximum number of links can be set in `constants.py`. There will always be a minimum of two links and one joint between them. 
+
+#### Parameters
+The following parameters were used in the final simulations for this assignmment:
 * `maxNumLinks = 10`
 * `minSideLen = 0.1`
 * `maxSideLen = 2`
