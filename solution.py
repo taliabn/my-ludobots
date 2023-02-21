@@ -5,21 +5,32 @@ import random
 import time
 import constants as c
 from body import BODY
+import pickle
 
 
 class SOLUTION:
 
 	def __init__(self, ID):
-		self.dna = [[3,2],[1,1]]	
+		# self.dna = [[2,2],[0,1],[1,0]]
+		self.dna = self.Generate_DNA
 		self.myID = ID
 
 
 	def Start_Simulation(self, directOrGUI):
+		self.Generate_DNA()
+		# print(self.dna)
 		self.body = BODY(self.dna, self.myID)
+		# self.body.Save()
+		# with open(f'BODY{self.myID}.pickle', 'rb') as handle:
+		# 	self.body = pickle.load(handle)
 		self.Generate_Random_Brain()
 		IDstr = str(self.myID)
 		os.system("start /B python simulate.py " + directOrGUI + " " + IDstr) # OS specific call
 
+
+	def Generate_DNA(self):
+		self.dna = [[random.randint(0, c.maxNumSelfEdges),random.randint(1,c.maxNumChildEdges)] 
+	      				for node in range(random.randint(2, (c.maxNumNodes)))]
 
 	def Wait_For_Simulation_To_End(self):
 		while not os.path.exists("fitness" + str(self.myID) + ".txt"): # do not know if previous simulation finished and fitness file is ready
@@ -32,31 +43,6 @@ class SOLUTION:
 
 	def Get_Fitness(self):
 		return self.fitness
-
-
-	# def Generate_Random_Body(self):
-	# 	if os.path.exists(f"body{self.myID}.urdf"):
-	# 		return
-	# 	pyrosim.Start_URDF(f"body{self.myID}.urdf") # stores description of robot's body
-		
-	# 	sensorColor = {0: "Blue", 1: "Green"}
-	# 	l, w, h = [random.uniform(c.minSideLen, c.maxSideLen) for dim in range(3)]
-	# 	has_sensor = random.randint(0,1)
-	# 	pyrosim.Send_Cube(name="0", pos=[l/2, w/2, h/2], size=[l, w, h], color=sensorColor[has_sensor])
-	# 	if has_sensor:
-	# 		self.sensorLinks.append("0")	
-
-	# 	for i in range(1, self.numLinks):
-	# 		pyrosim.Send_Joint(name = f"{i-1}_{i}" , parent= f"{i-1}" , child = f"{i}" , 
-	# 						   type = "spherical", position = [l, w, 0], jointAxis = "0 0 1") # prev block pos
-	# 		l, w, h = [random.uniform(c.minSideLen, c.maxSideLen) for dim in range(3)]
-	# 		has_sensor = random.randint(0,1)		
-	# 		pyrosim.Send_Cube(name=f"{i}", pos=[l/2, w/2, h/2], size=[l, w, h], color=sensorColor[has_sensor])
-	# 		if has_sensor:
-	# 			self.sensorLinks.append(f"{i}")		
-
-	# 	self.numSensorNeurons = len(self.sensorLinks)
-	# 	pyrosim.End()
 
 
 	def Generate_Random_Brain(self):
