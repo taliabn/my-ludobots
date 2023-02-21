@@ -49,7 +49,7 @@ Properties of creatures are divided into two categories, those randomly generate
 
 Table 1. Summary of random vs encoded body part properties
 
-![figure explaining how a numerical encoding of a body plan is transformed into a virtual creature]("/figures/fig2-a7.png") 
+![figure explaining how a numerical encoding of a body plan is transformed into a virtual creature](/figures/fig2-a7.png) 
 Figure 1. Body plan generation process
 
 Note that the indirect encoding mechanism has an important implication: a single genotype can lead to multiple phenotypes. 
