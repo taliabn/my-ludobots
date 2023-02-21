@@ -38,8 +38,13 @@ See [r/ludobots: parallelhillclimber](https://www.reddit.com/r/ludobots/wiki/par
 #### Method to generate bodies
 3D bodies are recursively generated using graph-based body plans, a mehod that is heavily influenced by [Karl Sims'](https://www.karlsims.com/evolved-virtual-creatures.html) work<sup>[1]</sup>.
 
-Properties of creatures are divided into two categories, those randomly generated for each creature and those determined by "DNA" genotype that identifies a general body plan. This means that it is *not* a direct encoding between phenotypes and genotypes. See Table 1  for a summary. The body plan genotype graph encodes the number of uniqe link types, number of children for each link, and number of clones of each link. Each unique link has its own link dimensions, joint axis, directionality, and presence of sensor and corresponding color. See Figure 1 for a summary of how body plans are generated. 
+Properties of creatures are divided into two categories, those randomly generated for each creature and those determined by "DNA" genotype that identifies a general body plan. This means that it is *not* a direct encoding between phenotypes and genotypes. See Table 1  for a summary. The body plan genotype graph encodes the number of uniqe link types, number of children for each link, and number of clones of each link (self edges). Each unique link has its own link dimensions, joint axis, directionality, and presence of sensor and corresponding color. See Figure 1 for an example of how body plans are generated. 
 
+
+![figure explaining how a numerical encoding of a body plan is transformed into a virtual creature](/figures/fig2-a7.png) 
+Figure 1. Body plan generation process
+
+Note that the indirect encoding mechanism has an important implication: a single genotype can lead to multiple phenotypes. 
 
 | random | encoded |
 | ------ | ------- |
@@ -48,11 +53,6 @@ Properties of creatures are divided into two categories, those randomly generate
 | joint axis and directionality | number of new children (edges to next node)
 
 Table 1. Summary of random vs encoded body part properties
-
-![figure explaining how a numerical encoding of a body plan is transformed into a virtual creature](/figures/fig2-a7.png) 
-Figure 1. Body plan generation process
-
-Note that the indirect encoding mechanism has an important implication: a single genotype can lead to multiple phenotypes. 
 
 To ensure that body plans follow basic laws of physics, before adding a link to the body, we check that there is no existing link in the same absolute position, preventing overlapping body parts. This means that some links specified by the genotype may not end up in the final body. To allow for freer growth in the z-direction, the robot starts at an absolute position of [0,0,3] and drops to the ground when the simulation starts. Additionally, we check that the absolute z position of a link isn't negative (i.e below the floor) before adding it.
 
