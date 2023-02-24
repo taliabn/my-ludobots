@@ -11,19 +11,18 @@ import pickle
 class SOLUTION:
 
 	def __init__(self, ID):
-		# self.dna = [[2,2],[0,1],[1,0]]
-		self.dna = self.Generate_DNA
+		# self.dna = [[0,1],[0,1],[0,0]]
 		self.myID = ID
+		self.Generate_DNA()
+		self.body = BODY(self.dna, self.myID)
+		self.Generate_Random_Brain()
 
 
 	def Start_Simulation(self, directOrGUI):
-		self.Generate_DNA()
 		# print(self.dna)
-		self.body = BODY(self.dna, self.myID)
 		# self.body.Save()
 		# with open(f'BODY{self.myID}.pickle', 'rb') as handle:
 		# 	self.body = pickle.load(handle)
-		self.Generate_Random_Brain()
 		IDstr = str(self.myID)
 		os.system("start /B python simulate.py " + directOrGUI + " " + IDstr) # OS specific call
 
@@ -47,36 +46,52 @@ class SOLUTION:
 
 	def Generate_Random_Brain(self):
 		pyrosim.Start_NeuralNetwork(f"brain{self.myID}.nndf") # stores description of neural network
+		# print(self.body.allLinks)
+		# print(self.body.allJoints)
 
+		print("GENERATING BRAIN\n\n")
+
+		numLinks = len(self.body.allLinks)
+		numSensorNeurons = len(self.body.sensorLinks)
+
+		neuronName = 0
 		# create sensor neurons
-		for i, link in enumerate(self.body.sensorLinks):
-			# print(f"sensor neuron {i} for link {link}")
-			pyrosim.Send_Sensor_Neuron(name = i, linkName = f"{link}")
+		for link in self.body.sensorLinks:
+			# print(f"sensor neuron {neuronName} for link {link}")
+			pyrosim.Send_Sensor_Neuron(name = neuronName, linkName = f"{link}")
+			neuronName += 1
 		# create hidden neurons
-		for i in  range(self.body.numSensorNeurons, self.body.numSensorNeurons + c.numHiddenNeurons):
-			pyrosim.Send_Hidden_Neuron(name = i)
+		for i in  range(c.numHiddenNeurons):
+			# print(f"hidden neuron {neuronName}")
+			pyrosim.Send_Hidden_Neuron(name = neuronName)
+			neuronName += 1
 		# create motor neurons
-		for i in range(1, self.body.numLinks):
-			pyrosim.Send_Motor_Neuron(name = i + self.body.numSensorNeurons + c.numHiddenNeurons,
-			     					  jointName = f"{i-1}_{i}")
+		for joint in self.body.allJoints:
+			# print(f"motor neuron {neuronName} for joint {joint}")
+			pyrosim.Send_Motor_Neuron(name = neuronName,
+			     					  jointName = joint)
+			neuronName += 1
 		
 		# initialize neuron weights
-		self.weights = [np.random.rand(c.numHiddenNeurons, self.body.numSensorNeurons) * 2 - 1,
-						np.random.rand(c.numHiddenNeurons, self.body.numLinks) * 2 - 1,]
+		self.weights = [np.random.rand(c.numHiddenNeurons, numSensorNeurons) * 2 - 1,
+						np.random.rand(c.numHiddenNeurons, numLinks) * 2 - 1,]
 		
+		# print("sensor to hidden:")
 		# create synapses for sensor neurons to hidden neurons
 		for currRow in range(c.numHiddenNeurons):
-			for currColumn in range(self.body.numSensorNeurons):
+			for currColumn in range(numSensorNeurons):
 				pyrosim.Send_Synapse(sourceNeuronName = currColumn, 
-			 						targetNeuronName = currRow + self.body.numSensorNeurons, 
+			 						targetNeuronName = currRow + numSensorNeurons, 
 									weight = self.weights[0][currRow][currColumn])
-
+				# print(f"src = {currColumn} --> dst = {currRow + numSensorNeurons}")
+		# print("hidden to motor")
 		# create synapses for hidden neurons to motor neurons
 		for currRow in range(c.numHiddenNeurons):
-			for currColumn in range(self.body.numLinks):
-				pyrosim.Send_Synapse(sourceNeuronName = currRow + self.body.numSensorNeurons, 
-			 						targetNeuronName = currColumn + self.body.numSensorNeurons + c.numHiddenNeurons, 
+			for currColumn in range(len(self.body.allJoints)): # 1 less joint than motor neuron
+				pyrosim.Send_Synapse(sourceNeuronName = currRow + numSensorNeurons, 
+			 						targetNeuronName = currColumn + numSensorNeurons + c.numHiddenNeurons, 
 									weight = self.weights[1][currRow][currColumn])
+				# print(f"src = {currRow + numSensorNeurons} --> dst = {currColumn + numSensorNeurons + c.numHiddenNeurons}")
 				
 		pyrosim.End()
 	

@@ -55,6 +55,7 @@ class BODY:
 		self.filledSpace = [] # listof [lower_dim: np array(1,3), upper_dim: np array(1,3)]
 		self.sensorLinks = ["root"] # listof node names (str)
 		self.allLinks = ["root", "0-0"]
+		self.allJoints = ["root_0-0"]
 		self.availableID = 0
 		self.numLinks = 2 # root
 		self.Generate_Body()
@@ -125,6 +126,7 @@ class BODY:
 
 		# function to recursively add links
 		def add_link(prevUniqueNode,  prevAbsPos, prevLinkName, currUniqueNode, currClone, currChild, growthDir):
+			# print("RECRUSING\n")
 			currNode = self.uniqueNodeList[currUniqueNode]
 			prevNode = self.uniqueNodeList[prevUniqueNode]
 
@@ -168,6 +170,7 @@ class BODY:
 			if currNode.has_sensor:
 				self.sensorLinks.append(currLinkName)	
 			self.allLinks.append(currLinkName)
+			self.allJoints.append(f"{prevLinkName}_{currLinkName}" )
 
 			# recursive call(s) to add clones
 			if currClone < currNode.numSelfEdge :

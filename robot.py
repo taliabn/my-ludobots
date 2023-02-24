@@ -12,6 +12,7 @@ class ROBOT:
 	def __init__(self, directOrGUI, solutionID):
 
 		self.robotId = p.loadURDF(f"body{solutionID}.urdf") # floor
+		# self.robotId = p.loadURDF(f"body.urdf") # floor
 		pyrosim.Prepare_To_Simulate(self.robotId)
 		self.nn = NEURAL_NETWORK(f"brain{solutionID}.nndf")
 		self.Prepare_To_Sense()
