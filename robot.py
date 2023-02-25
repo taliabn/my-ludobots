@@ -9,20 +9,14 @@ import constants as c
 
 class ROBOT:
 
-	def __init__(self, directOrGUI, solutionID):
+	def __init__(self, directOrGUI, solutionID, seed):
 
-		self.robotId = p.loadURDF(f"body{solutionID}.urdf") # floor
+		self.robotId = p.loadURDF(f"./{seed}/body{solutionID}.urdf") # floor
 		# self.robotId = p.loadURDF(f"body.urdf") # floor
 		pyrosim.Prepare_To_Simulate(self.robotId)
-		self.nn = NEURAL_NETWORK(f"brain{solutionID}.nndf")
+		self.nn = NEURAL_NETWORK(f"./{seed}/brain{solutionID}.nndf")
 		self.Prepare_To_Sense()
 		self.Prepare_to_Act()
-		# if directOrGUI == "DIRECT": 
-		os.system("rm brain" + solutionID + ".nndf") # OS specific call
-		# if directOrGUI == 'GUI':
-		# 	timestamp =  datetime.now().strftime("%m%d%H%M%S")
-		# 	copy_command = f"cp brain{solutionID}.nndf brain{solutionID}-{timestamp}.nndf"
-		# 	os.system(copy_command)
 
 
 	def Prepare_To_Sense_old(self):

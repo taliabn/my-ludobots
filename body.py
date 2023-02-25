@@ -41,8 +41,8 @@ class uniqueNode:
 
 class BODY:
 
-	def __init__(self, dna, ID):
-		self.myID = ID
+	def __init__(self, dna, solutionID, seed):
+		self.seed = seed
 		self.dna = dna # list of [num selfEdges, num nextEdges] pairs
 		# orientationsQueue = [np.array([1,0,0]), np.array([0,1,0]), np.array([0,0,1])]
 		orientationsQueue = [np.array([0,0,1]), np.array([0,1,0])]
@@ -53,24 +53,17 @@ class BODY:
 		for node in self.uniqueNodeList:
 			node.Print()
 		self.initialPos = np.array([0, 0, 3])
-		self.filledSpaces = [] # listof [lower_dim: np array(1,3), upper_dim: np array(1,3)]
-		self.sensorLinks = ["root"] # listof node names (str)
-		self.allLinks = ["root", "0-0"]
-		self.allJoints = ["root_0-0"]
-		self.availableID = 0
-		self.numLinks = 2 # root
-		self.Generate_Body()
-		self.numSensorNeurons = len(self.sensorLinks)
+		self.Generate_Body(solutionID)
 	
 
-	def SaveToPickle(self):
-		with open(f'BODY{self.myID}.pickle', 'wb') as handle:
+	def SaveToPickle(self, ID):
+		with open(f'BODY{ID}.pickle', 'wb') as handle:
 			pickle.dump(self, handle, protocol=pickle.HIGHEST_PROTOCOL)
 
 
-	def fetchID(self):
-		self.availableID += 1
-		return self.availableID
+	def fetchLinkID(self):
+		self.availableLinkID += 1
+		return self.availableLinkID
 
 
 	def switchDirection(self, dir, orientation):
@@ -129,8 +122,19 @@ class BODY:
 		return currAbsPos
 
 
-	def Generate_Body(self):
+	def Generate_Body(self, ID):
+		self.filledSpaces = [] # listof [lower_dim: np array(1,3), upper_dim: np array(1,3)]
+		self.sensorLinks = ["root"] # listof node names (str)
+		self.allLinks = ["root", "0-0"]
+		self.allJoints = ["root_0-0"]
+		self.availableLinkID = 0
+		self.numLinks = 2 # root
+		self.numSensorNeurons = len(self.sensorLinks)		
+		self.Generate_URDF(ID)
 
+
+	def Generate_URDF(self, myID):
+		# print(f"GENERATING BODY {myID}")
 		# function to recursively add links
 		def add_link(prevUniqueNode,  prevAbsPos, prevLinkName, currUniqueNode, currClone, currChild, growthDir):
 			# print("RECRUSING\n")
@@ -148,11 +152,11 @@ class BODY:
 			currJointPos = (prevNode.orientation + currNode.orientation)  * (prevNode.dims/2) * growthDir 
 			currLinkPos = (currNode.orientation) * (currNode.dims/2)  * growthDir
 			
-			currLinkName = f"{currUniqueNode}-{self.fetchID()}"
+			currLinkName = f"{currUniqueNode}-{self.fetchLinkID()}"
 			currAbsPos = prevAbsPos + currJointPos + currLinkPos
 			# print(f"checking {currLinkName} at pos {currAbsPos} with dims {currNode.dims}")
 			if not self.has_space(currAbsPos, currNode.dims):
-				print(f"{currLinkName}: NO SPACE\n")
+				# print(f"{currLinkName}: NO SPACE\n")
 				return
 				# print(f"{currLinkName}: has space")
 			self.fill_space(currAbsPos, currNode.dims)
@@ -193,8 +197,7 @@ class BODY:
 							currUniqueNode = currUniqueNode + 1, currClone = 0, currChild = child,
 							growthDir = growthDir)
 
-		pyrosim.Start_URDF(f"body{self.myID}.urdf") # stores description of robot's body
-		# pyrosim.Start_URDF(f"body.urdf") # stores description of robot's body
+		pyrosim.Start_URDF(f"./{self.seed}/body{myID}.urdf") # stores description of robot's body
 		
 		growthDir = [1, 1, -1]
 		# add dummy root link and first real link

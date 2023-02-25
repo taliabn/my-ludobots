@@ -10,26 +10,28 @@ import pickle
 
 class SOLUTION:
 
-	def __init__(self, ID):
+	def __init__(self, ID, seed):
 		# self.dna = [[0,1],[0,1],[0,0]]
+		self.seed = seed
 		self.myID = ID
 		self.Generate_DNA()
-		self.body = BODY(self.dna, self.myID)
+		print(self.dna)
+		self.body = BODY(self.dna, self.myID, self.seed)
 		self.Generate_Random_Brain()
 
 
 	def Start_Simulation(self, directOrGUI):
-		# print(self.dna)
 		# self.body.Save()
 		# with open(f'BODY{self.myID}.pickle', 'rb') as handle:
 		# 	self.body = pickle.load(handle)
 		IDstr = str(self.myID)
-		os.system("start /B python simulate.py " + directOrGUI + " " + IDstr) # OS specific call
+		os.system(f"start /B python simulate.py  {directOrGUI} {self.myID} {self.seed}") # OS specific call
 
 
 	def Generate_DNA(self):
 		self.dna = [[random.randint(0, c.maxNumSelfEdges),random.randint(1,c.maxNumChildEdges)] 
 	      				for node in range(random.randint(2, (c.maxNumNodes)))]
+		self.dna[-1][-1] = 0
 
 	def Wait_For_Simulation_To_End(self):
 		while not os.path.exists("fitness" + str(self.myID) + ".txt"): # do not know if previous simulation finished and fitness file is ready
@@ -45,8 +47,8 @@ class SOLUTION:
 
 
 	def Generate_Random_Brain(self):
-		pyrosim.Start_NeuralNetwork(f"brain{self.myID}.nndf") # stores description of neural network
-		# print(self.body.allLinks)
+		pyrosim.Start_URDF(f"./{self.seed}/brain{self.myID}.nndf") # stores description of neural network
+		print(f"all links {self.body.allLinks}")
 		# print(self.body.allJoints)
 
 		print("GENERATING BRAIN\n\n")
@@ -71,7 +73,6 @@ class SOLUTION:
 			pyrosim.Send_Motor_Neuron(name = neuronName,
 			     					  jointName = joint)
 			neuronName += 1
-		
 		# initialize neuron weights
 		self.weights = [np.random.rand(c.numHiddenNeurons, numSensorNeurons) * 2 - 1,
 						np.random.rand(c.numHiddenNeurons, numLinks) * 2 - 1,]
@@ -97,6 +98,8 @@ class SOLUTION:
 	
 
 	def Mutate(self):
+		self.body.Generate_Body(self.myID)
+		self.Generate_Random_Brain()
 		randomRow = random.randint(0, c.numHiddenNeurons - 1)
 		# change weight of a random sensor neuron synapse, if at least one exists
 		if self.body.numSensorNeurons > 0:
@@ -109,3 +112,11 @@ class SOLUTION:
 
 	def Set_ID(self, newID):
 		self.myID = newID
+
+
+	def Delete_Files(self):
+		try:
+			os.remove(f"./{self.seed}/brain{self.myID}.nndf") # parent was worse
+			os.remove(f"./{self.seed}/body{self.myID}.urdf") # parent was worse
+		except FileNotFoundError:
+			print(f"Files for {self.myID} with seed {self.seed} is not present in the system.")

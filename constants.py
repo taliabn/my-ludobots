@@ -1,8 +1,8 @@
 # number of evolutions
 populationSize = 1
-numberOfGenerations = 1
+numberOfGenerations = 3
 # number of times to step through simulation
-steps = 2000
+steps = 50
 # length of each time-step in seconds
 stepLength = 1/120
 # nn properties
@@ -22,3 +22,5 @@ maxNumSelfEdges = 4
 maxNumChildEdges = 2
 minSideLen = 0.1
 maxSideLen = 1
+
+seed = 42

@@ -4,13 +4,21 @@ import copy
 import os
 from datetime import datetime
 import pyrosim.pyrosim as pyrosim
+import random
 
 
 class PARALLEL_HILL_CLIMBER:
+
 	def __init__(self):
-		os.system("rm brain*.nndf")
-		os.system("rm body*.urdf")
 		os.system("rm fitness*.txt")
+		self.seed = c.seed
+		random.seed(self.seed)
+
+		if not os.path.exists(f"./{self.seed}"):
+			os.makedirs(f"./{self.seed}")
+		# else:
+		# 	print(f"ERROR SEED DIR ALREADY EXISTS")
+		# 	exit()
 
 		self.parents = {}
 		self.nextAvailableID = 0
@@ -19,7 +27,7 @@ class PARALLEL_HILL_CLIMBER:
 		pyrosim.End()
 
 		for i in range(c.populationSize):
-			self.parents[i] = SOLUTION(self.nextAvailableID)
+			self.parents[i] = SOLUTION(self.nextAvailableID, self.seed)
 			self.nextAvailableID += 1
 
 
@@ -41,7 +49,6 @@ class PARALLEL_HILL_CLIMBER:
 
 	def Evaluate(self, solutions):
 		for solution in solutions.values():
-			# print(solution)
 			solution.Start_Simulation("DIRECT")
 		for solution in solutions.values():
 			solution.Wait_For_Simulation_To_End()
@@ -63,8 +70,11 @@ class PARALLEL_HILL_CLIMBER:
 	# want fitness to be as close to zero as possible
 	def Select(self):
 		for key in self.parents.keys():
-			if self.parents[key].fitness > self.children[key].fitness:
+			if self.parents[key].fitness < self.children[key].fitness:
+				self.parents[key].Delete_Files()
 				self.parents[key] = self.children[key]
+			else:
+				self.children[key].Delete_Files()
 
 
 	def WriteToLog(self):
@@ -76,11 +86,14 @@ class PARALLEL_HILL_CLIMBER:
 
 		
 	def Print(self):
+		print("\n")
 		for key in self.parents.keys():
-			print(f"parent's fitness = {self.parents[key].fitness}, child's fitness: {self.children[key].fitness}")
+			print(f"parent {self.parents[key].myID} fitness = {self.parents[key].fitness}, child {self.children[key].myID}fitness: {self.children[key].fitness}")
+		print("\n")
 		
 	
 	def Show_Best(self):
+		print("SHOWING BEST")
 		winning_parent = self.parents[0]
 		winning_fitness = self.parents[0].Get_Fitness()
 		for parent in self.parents.values():

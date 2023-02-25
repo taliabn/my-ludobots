@@ -9,8 +9,8 @@ import constants as c
 
 class SIMULATION:
 
-	def __init__(self, directOrGUI, solutionID):
-		# print(f"\ninitializing simulation with mode {directOrGUI}\n")
+	def __init__(self, directOrGUI, solutionID, seed):
+		print(f"\n STARTING {directOrGUI} SIMULATION FOR SEED {seed}, SOLUTION {solutionID}\n")
 		if directOrGUI == "DIRECT":
 			self.physicsClient = p.connect(p.DIRECT)
 			self.stepTime = 0
@@ -25,7 +25,7 @@ class SIMULATION:
 		p.setGravity(0,0,-9.8)
 		# only writes new world for first simulation (solutionID=0)
 		self.world = WORLD(initial_world = not int(solutionID)) 
-		self.robot = ROBOT(directOrGUI, solutionID)
+		self.robot = ROBOT(directOrGUI, solutionID, seed)
 
 
 	# runs simulation
@@ -40,7 +40,7 @@ class SIMULATION:
 			self.robot.Sense(i)
 			self.robot.Think()
 			self.robot.Act(i)
-
+		
 
 	# gets final position of robot
 	def Get_Fitness(self, solutionID):
