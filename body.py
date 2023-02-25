@@ -15,13 +15,14 @@ class uniqueNode:
 
 		# randomly chosen:
 		self.has_sensor: bool = bool(random.getrandbits(1)) # random
+		# self.orientation = random.choice(orientationsQueue)
 		# get random orientation that isn't the previous one
 		self.orientation = orientationsQueue.pop(0)
 		random.shuffle(orientationsQueue)
 		orientationsQueue.append(self.orientation)
 
 		# possibly change min/max side length to be encoded in dna?
-		self.dims = np.array([round(random.uniform(c.minSideLen, c.maxSideLen), 2)
+		self.dims = np.array([round(random.uniform(c.minSideLen, c.maxSideLen), 1)
 											for dim in range(3)]) #random
 		if self.has_sensor:
 			self.color = "Green"
@@ -51,8 +52,8 @@ class BODY:
 							  	  for instruction in self.dna]
 		for node in self.uniqueNodeList:
 			node.Print()
-		self.initialPos = [0, 0, 3]
-		self.filledSpace = [] # listof [lower_dim: np array(1,3), upper_dim: np array(1,3)]
+		self.initialPos = np.array([0, 0, 3])
+		self.filledSpaces = [] # listof [lower_dim: np array(1,3), upper_dim: np array(1,3)]
 		self.sensorLinks = ["root"] # listof node names (str)
 		self.allLinks = ["root", "0-0"]
 		self.allJoints = ["root_0-0"]
@@ -74,22 +75,29 @@ class BODY:
 
 	def switchDirection(self, dir, orientation):
 		return np.logical_not(orientation)*dir + orientation*-1 #type: ignore
+	
 
-
-	def has_space(self, absPos, size, tol=0.1):
+	def has_space(self, absPos, size, tol=0.01):
 		if [absPos - size/2][0][2] <= 0:
-			return False 
-		for block in self.filledSpace:
 			# below floor
-			# overlaps with existing block
-			if (((block[0] + tol < absPos + size/2).all() and (absPos + size/2 < block[1] - tol).all()) or \
-				((block[0] + tol < absPos - size/2).all() and (absPos - size/2 < block[1] - tol).all())):
-				return False		
+			# print(f"has_space false: underground")
+			return False 
+		for block in self.filledSpaces:
+			if (sum(block[0] >= (absPos + size/2)) == 0) and  (sum((absPos - size/2) >= block[1]) == 0):
+				# print(f"has_space false: overlapped with : {block}")
+				return False	#overlap
+
 		return True
 	
 
 	def fill_space(self, absPos, size):
-		self.filledSpace.append([absPos - size/2, absPos + size/2])
+		self.filledSpaces.append((absPos - size/2, absPos + size/2))
+
+
+	def PrintFilledSpaces(self):
+		print("self.filled spaces:")
+		for arr in self.filledSpaces:
+			print(arr)
 
 
 	def add_root(self, growth_dir):
@@ -113,7 +121,6 @@ class BODY:
 							pos=currPos,
 							size=currNode.dims, 
 							color=currNode.color)
-		print(f"0-0 link pos: {currPos}")
 		if currNode.has_sensor:
 			self.sensorLinks.append("0-0")	
 		
@@ -143,12 +150,14 @@ class BODY:
 			
 			currLinkName = f"{currUniqueNode}-{self.fetchID()}"
 			currAbsPos = prevAbsPos + currJointPos + currLinkPos
+			# print(f"checking {currLinkName} at pos {currAbsPos} with dims {currNode.dims}")
 			if not self.has_space(currAbsPos, currNode.dims):
-				print(f"{currLinkName}: NO SPACE")
+				print(f"{currLinkName}: NO SPACE\n")
 				return
-			else:
 				# print(f"{currLinkName}: has space")
-				self.fill_space(currAbsPos, currNode.dims)
+			self.fill_space(currAbsPos, currNode.dims)
+			# self.PrintFilledSpaces()
+			# print("\n\n")
 			# print(f"CURR: {currLinkName} ")
 			# print(f"{prevLinkName}_{currLinkName}" )
 			# print(f"currJointPos: {currJointPos}" )
