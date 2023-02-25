@@ -54,7 +54,11 @@ class BODY:
 			node.Print()
 		self.initialPos = np.array([0, 0, 3])
 		self.Generate_Body(solutionID)
-	
+		self.prevSensortoHiddenWeights = {} # {link name: float [-1,1]}
+		self.prevHiddentoMotorWeights = {} # {joint name: float [-1,1]}
+		self.currSensortoHiddenWeights = {} # {link name: float [-1,1]}
+		self.currHiddentoMotorWeights = {} # {joint name: float [-1,1]}
+		self.Generate_Brain_nndf(solutionID)
 
 	def SaveToPickle(self, ID):
 		with open(f'BODY{ID}.pickle', 'wb') as handle:
@@ -130,10 +134,10 @@ class BODY:
 		self.availableLinkID = 0
 		self.numLinks = 2 # root
 		self.numSensorNeurons = len(self.sensorLinks)		
-		self.Generate_URDF(ID)
+		self.Generate_Body_urdf(ID)
 
 
-	def Generate_URDF(self, myID):
+	def Generate_Body_urdf(self, myID):
 		# print(f"GENERATING BODY {myID}")
 		# function to recursively add links
 		def add_link(prevUniqueNode,  prevAbsPos, prevLinkName, currUniqueNode, currClone, currChild, growthDir):
@@ -215,3 +219,62 @@ class BODY:
 							currUniqueNode = 1, currClone = 0, currChild = child,
 							growthDir = growthDir)
 		pyrosim.End()
+
+
+	def Mutate_Body(self):
+		pass
+
+
+	def Generate_Brain(self, myID):
+		self.prevHiddentoMotorWeights = self.currHiddentoMotorWeights
+		self.prevSensortoHiddenWeights = self.currSensortoHiddenWeights
+		self.currSensortoHiddenWeights = {}
+		self.currSensortoHiddenWeights = {}
+		self.Generate_Brain_nndf(myID)
+
+
+	def Generate_Brain_nndf(self, myID):
+		pyrosim.Start_URDF(f"./{self.seed}/brain{myID}.nndf")
+		# create hidden neurons
+		for i in  range(c.numHiddenNeurons):
+			# print(f"hidden neuron {neuronName}")
+			pyrosim.Send_Hidden_Neuron(name = i)
+
+		currNeuronName = c.numHiddenNeurons
+
+		# sensor neurons and sensor-->hidden synapses
+		for i in  range(c.numHiddenNeurons):
+			for link in self.sensorLinks: 
+
+				# get weight if same link (also with a sensor) previously existed, else random
+				weight =  self.prevSensortoHiddenWeights.get(link, random.random() * 2 -1)
+				self.currSensortoHiddenWeights[link] = weight
+
+				pyrosim.Send_Sensor_Neuron(name = currNeuronName, linkName = link)
+				pyrosim.Send_Synapse(sourceNeuronName = currNeuronName, 
+			 						targetNeuronName = i, 
+									weight = weight)
+				currNeuronName += 1
+		# print("hidden to motor")
+		# sensor neurons and sensor-->hidden synapses
+		for i in  range(c.numHiddenNeurons):
+			for joint in self.allJoints: 
+				# get weight if joint previously existed, else random
+				weight =  self.prevHiddentoMotorWeights.get(joint, random.random() * 2 -1)
+				self.currHiddentoMotorWeights[joint] = weight
+
+				pyrosim.Send_Motor_Neuron(name = currNeuronName, jointName = joint)
+				pyrosim.Send_Synapse(sourceNeuronName = i, 
+			 						targetNeuronName = currNeuronName, 
+									weight = weight)
+				currNeuronName += 1
+
+		pyrosim.End()
+
+
+	def Mutate_Brain(self):
+		m = (random.getrandbits(1))
+		if m:
+			self.currSensortoHiddenWeights[random.choice(self.sensorLinks)] = random.random() * 2 -1
+		else:
+			self.currHiddentoMotorWeights[random.choice(self.allJoints)] = random.random() * 2 -1
