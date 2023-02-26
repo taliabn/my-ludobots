@@ -5,12 +5,14 @@ import os
 from datetime import datetime
 import pyrosim.pyrosim as pyrosim
 import random
+import numpy as np
 
 
 class PARALLEL_HILL_CLIMBER:
 
 	def __init__(self):
-		os.system("rm fitness*.txt")
+		os.system("rm displacement*.txt")
+		os.system("rm tmp*.txt")
 		self.seed = c.seed
 		random.seed(self.seed)
 
@@ -19,7 +21,7 @@ class PARALLEL_HILL_CLIMBER:
 		# else:
 		# 	print(f"ERROR SEED DIR ALREADY EXISTS")
 		# 	exit()
-
+		self.fitnessValues = np.empty(c.numberOfGenerations)
 		self.parents = {}
 		self.nextAvailableID = 0
 
@@ -36,7 +38,9 @@ class PARALLEL_HILL_CLIMBER:
 		for currentGeneration in range(c.numberOfGenerations):
 			print(f"CURRENT GENERATION: {currentGeneration}")
 			self.Evolve_For_One_Generation()
-
+			self.fitnessValues[currentGeneration] = self.Get_Best().fitness
+		self.Save_Fitness_Values()
+		
 	
 	def Evolve_For_One_Generation(self):
 		self.Spawn()
@@ -70,7 +74,8 @@ class PARALLEL_HILL_CLIMBER:
 
 	def Select(self):
 		for key in self.parents.keys():
-			if self.parents[key].fitness < self.children[key].fitness:
+			# minimize fitness
+			if self.parents[key].fitness > self.children[key].fitness:
 				self.parents[key].Delete_Files()
 				self.parents[key] = self.children[key]
 			else:
@@ -107,3 +112,10 @@ class PARALLEL_HILL_CLIMBER:
 		print("SHOWING BEST")
 		print(f"WINNING FITNESS: {winning_parent.fitness} from solution {winning_parent.myID}")
 		winning_parent.Start_Simulation("GUI")
+
+
+	def Save_Fitness_Values(self):
+		w = self.Get_Best()
+		print(f"FINAL WINNER for seed {self.seed}: solution {w.myID} with fitness {w.fitness}")
+		file_path = f"./{self.seed}/fitnessValues"
+		np.save(file_path, self.fitnessValues)

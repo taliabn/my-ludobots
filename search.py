@@ -7,4 +7,5 @@ try:
 except PermissionError:
 	print("ERROR: permission error")
 finally:
-	phc.Show_Best()
+	phc.Save_Fitness_Values()
+	# phc.Show_Best()
