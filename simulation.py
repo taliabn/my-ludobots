@@ -10,7 +10,6 @@ import constants as c
 class SIMULATION:
 
 	def __init__(self, directOrGUI, solutionID, seed):
-		# print(f"\n STARTING SEIMULATION FOR SEED {seed}, SOLUTION {solutionID}\n")
 		if directOrGUI == "DIRECT":
 			self.physicsClient = p.connect(p.DIRECT)
 			self.stepTime = 0
@@ -41,7 +40,6 @@ class SIMULATION:
 			self.robot.Sense(i)
 			self.robot.Think()
 			self.robot.Act(i)
-		# print(f"\n FINISHED SIMULATION for {self.ID}\n")
 		
 
 	def Record_Displacement(self):

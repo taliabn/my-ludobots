@@ -28,7 +28,7 @@ class ROBOT:
 	def Prepare_To_Sense(self):
 		self.sensors = {}
 		for linkName in self.nn.Get_Sensor_Neurons_Links():
-			self.sensors[linkName] = SENSOR(linkName)		
+			self.sensors[linkName] = SENSOR(linkName)
 
 
 	def Sense(self, i):
@@ -61,8 +61,10 @@ class ROBOT:
 		tmpFileName = f"tmp{solutionID}.txt"
 		with open(tmpFileName, "w") as f:
 			f.write(str(base_x))
+		print(f"WRITING DISPLACEMENT FOR {solutionID}")
 		displacementFileName = f"displacement{solutionID}.txt"
 		os.rename(tmpFileName, displacementFileName)
+		print(f"DONE WRITING DISPLACEMENT FOR {solutionID}")
 
 
 	# returns euclidean distance to top, center point on pyramid

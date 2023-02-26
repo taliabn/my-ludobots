@@ -46,7 +46,7 @@ class BODY:
 	def __init__(self, dna, solutionID, seed):
 		self.seed = seed
 		self.dna = dna # list of [num selfEdges, num nextEdges] pairs
-		print(dna)
+		# print(dna)
 		self.orientationsQueue = [np.array([1,0,0]), np.array([0,1,0]), np.array([0,0,1])]
 		# orientationsQueue = [np.array([0,0,1]), np.array([0,1,0])]
 		random.shuffle(self.orientationsQueue)
@@ -147,7 +147,7 @@ class BODY:
 
 
 	def Generate_Body_urdf(self, myID):
-		# print(f"GENERATING BODY {myID}")
+		print(f"GENERATING BODY {myID}")
 		# function to recursively add links
 		def add_link(prevUniqueNode,  prevAbsPos, prevLinkName, currUniqueNode, currClone, currChild, currLinkName, growthDir):
 			# print("RECRUSING\n")
@@ -169,7 +169,7 @@ class BODY:
 			currAbsPos = prevAbsPos + currJointPos + currLinkPos
 			# print(f"checking {currLinkName} at pos {currAbsPos} with dims {currNode.dims}")
 			if not self.has_space(currAbsPos, currNode.dims):
-				print(f"{currLinkName}: NO SPACE\n")
+				# print(f"{currLinkName}: NO SPACE\n")
 				return
 				# print(f"{currLinkName}: has space")
 			self.fill_space(currAbsPos, currNode.dims)
@@ -224,14 +224,14 @@ class BODY:
 		currNode = self.uniqueNodeList[0]
 		# naming convention: "{prevlinkname}-{node}{clone}{child}"
 		if currNode.numSelfEdge > 0:
-			print(f"CLONE 1 INIT:\n\tprev name: 000\n\tcurr name: 010\n")
+			# print(f"CLONE 1 INIT:\n\tprev name: 000\n\tcurr name: 010\n")
 			add_link(prevUniqueNode = 0, prevAbsPos = currAbsPos,  prevLinkName = "000", 
 						currUniqueNode = 0, currClone = 1, currChild = 0,
 						currLinkName = '010', growthDir = growthDir)
 		# add children
 		if 1 < len(self.uniqueNodeList):
 			for child in range(currNode.numChildEdge):
-				print(f"CHILD {child} INIT:\n\tprev name: 000\n\tcurr name: 000-10{child}\n")
+				# print(f"CHILD {child} INIT:\n\tprev name: 000\n\tcurr name: 000-10{child}\n")
 				add_link(prevUniqueNode = 0, prevAbsPos = currAbsPos,  prevLinkName = "000", 
 							currUniqueNode = 1, currClone = 0, currChild = child,
 							currLinkName = f'000-10{child}', growthDir = growthDir)

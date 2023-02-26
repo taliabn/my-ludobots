@@ -11,11 +11,11 @@ import pickle
 class SOLUTION:
 
 	def __init__(self, ID, seed):
-		# self.dna = [[0,1],[0,1],[0,0]]
+		# self.dna = [[2,2], [1,0]]
 		self.seed = seed
 		self.myID = ID
 		self.Generate_DNA()
-		print(self.dna)
+		# print(self.dna)
 		self.body = BODY(self.dna, self.myID, self.seed)
 
 
@@ -33,13 +33,16 @@ class SOLUTION:
 
 
 	def Wait_For_Simulation_To_End(self):
+		print(f"WAITING FOR {self.myID}.....")
 		while not os.path.exists("displacement" + str(self.myID) + ".txt"): # do not know if previous simulation finished and fitness file is ready
 			time.sleep(0.01)
+		print(f"ESCAPED WAIT, READING DISPLACEMENT FILE FOR {self.myID}")
 		displacementFileName  = f"displacement{self.myID}.txt"
 		with open(displacementFileName, "r") as f:
 			displacement = float(f.read())
 		self.fitness = displacement/self.body.wingspan
 		os.remove(displacementFileName) # OS specific call
+		print(f"REMOVED DISPLACEMENT FILE FOR {self.myID}")
 
 
 	def Get_Fitness(self):
