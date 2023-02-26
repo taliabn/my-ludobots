@@ -142,6 +142,7 @@ class BODY:
 		self.numLinks = 2 # root
 		self.numSensorNeurons = len(self.sensorLinks)		
 		self.Generate_Body_urdf(ID)
+		self.Calculate_Wingspan()
 
 
 	def Generate_Body_urdf(self, myID):
@@ -302,3 +303,16 @@ class BODY:
 			self.currSensortoHiddenWeights[random.choice(self.sensorLinks)] = random.random() * 2 -1
 		else:
 			self.currHiddentoMotorWeights[random.choice(self.allJoints)] = random.random() * 2 -1
+
+
+	def Calculate_Wingspan(self):
+		# get the length of robot in x direction
+		max_x = 0
+		min_x = 0
+		for link in self.filledSpaces:
+			if link[0][0] < min_x:
+				min_x = link[0][0]
+			if link[1][0] > max_x:
+				max_x = link[1][0]
+		# print(f"WINGSPAN: {max_x - min_x}")
+		self.wingspan =  max_x - min_x

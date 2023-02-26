@@ -42,9 +42,8 @@ class SIMULATION:
 			self.robot.Act(i)
 		
 
-	# gets final position of robot
-	def Get_Fitness(self, solutionID):
-		self.robot.Get_Fitness(solutionID)
+	def Record_Displacement(self, solutionID):
+		self.robot.Record_Displacement(solutionID)
 
 
 	# destructor

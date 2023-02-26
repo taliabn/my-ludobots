@@ -54,21 +54,21 @@ class ROBOT:
 		self.nn.Update()
 
 
-	def Get_Fitness(self, solutionID):
+	def Record_Displacement(self, solutionID):
 		basePositionAndOrientation = p.getBasePositionAndOrientation(self.robotId)
 		basePosition = basePositionAndOrientation[0]
-		fitness = self.Calculate_Fitness(basePosition)
+		base_x = basePosition[0]
 		tmpFileName = f"tmp{solutionID}.txt"
 		with open(tmpFileName, "w") as f:
-			f.write(str(fitness))
-		fitnessFileName	 = f"fitness{solutionID}.txt"
-		os.rename(tmpFileName, fitnessFileName)
+			f.write(str(base_x))
+		displacementFileName = f"displacement{solutionID}.txt"
+		os.rename(tmpFileName, displacementFileName)
 
 
 	# returns euclidean distance to top, center point on pyramid
-	def Calculate_Fitness(self, basePosition):
-		link_x, link_y, link_z = basePosition
-		# return ((c.pyramid_x - link_x)**2 + 
-	  	# 		link_y**2 + 
-	  	# 		(c.layer_height*c.num_pyramid_layers - link_z)**2)**0.5
-		return - link_x
+	# def Calculate_Fitness(self, basePosition):
+	# 	link_x, link_y, link_z = basePosition
+	# 	# return ((c.pyramid_x - link_x)**2 + 
+	#   	# 		link_y**2 + 
+	#   	# 		(c.layer_height*c.num_pyramid_layers - link_z)**2)**0.5
+	# 	return - link_x

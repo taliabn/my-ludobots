@@ -31,13 +31,15 @@ class SOLUTION:
 	      				for node in range(random.randint(2, (c.maxNumNodes)))]
 		self.dna[-1][-1] = 0
 
+
 	def Wait_For_Simulation_To_End(self):
-		while not os.path.exists("fitness" + str(self.myID) + ".txt"): # do not know if previous simulation finished and fitness file is ready
+		while not os.path.exists("displacement" + str(self.myID) + ".txt"): # do not know if previous simulation finished and fitness file is ready
 			time.sleep(0.01)
-		fitnessFileName  = f"fitness{self.myID}.txt"
-		with open(fitnessFileName, "r") as f:
-			self.fitness = float(f.read())
-		os.remove(fitnessFileName) # OS specific call
+		displacementFileName  = f"displacement{self.myID}.txt"
+		with open(displacementFileName, "r") as f:
+			displacement = float(f.read())
+		self.fitness = displacement/self.body.wingspan
+		os.remove(displacementFileName) # OS specific call
 
 
 	def Get_Fitness(self):
