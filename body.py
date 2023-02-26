@@ -52,8 +52,8 @@ class BODY:
 		# initialize graph nodes
 		self.uniqueNodeList = [uniqueNode(instruction[0], instruction[1], self.orientationsQueue)
 							  	  for instruction in self.dna]
-		self.PrintUniqueNodes()
-		self.initialPos = np.array([0, 0, 3])
+		# self.PrintUniqueNodes()
+		self.initialPos = np.array(c.startingPos)
 		self.Generate_Body(solutionID)
 		self.prevSensortoHiddenWeights = {} # {link name: float [-1,1]}
 		self.prevHiddentoMotorWeights = {} # {joint name: float [-1,1]}

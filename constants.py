@@ -1,8 +1,9 @@
+import random
 # number of evolutions
-populationSize = 1
-numberOfGenerations = 3
+populationSize = 500
+numberOfGenerations = 25
 # number of times to step through simulation
-steps = 50
+steps = 1500
 # length of each time-step in seconds
 stepLength = 1/120
 # nn properties
@@ -17,10 +18,12 @@ num_pyramid_layers = 10
 pyramid_length = 15
 layer_height = 0.1
 # random body plan ranges
-maxNumNodes = 5
-maxNumSelfEdges = 4
+maxNumNodes = 4
+maxNumSelfEdges = 3
 maxNumChildEdges = 2
 minSideLen = 0.1
-maxSideLen = 1
+maxSideLen = .75
+startingPos = [0, 0, 1.5]
 
-seed = 42
+# seed = 876
+seed = random.randint(0,1000)
