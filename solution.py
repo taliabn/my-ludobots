@@ -45,8 +45,7 @@ class SOLUTION:
 	
 
 	def Mutate(self):
-		# m = (random.getrandbits(1))
-		m = 0
+		m = (random.getrandbits(1))
 		if m:
 			self.body.Mutate_Body()
 		self.body.Generate_Body(self.myID)

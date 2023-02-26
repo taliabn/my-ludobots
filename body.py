@@ -15,6 +15,7 @@ class uniqueNode:
 
 		# randomly chosen:
 		self.has_sensor: bool = bool(random.getrandbits(1)) # random
+		self.Set_Color()
 		# self.orientation = random.choice(orientationsQueue)
 		# get random orientation that isn't the previous one
 		self.orientation = orientationsQueue.pop(0)
@@ -24,11 +25,12 @@ class uniqueNode:
 		# possibly change min/max side length to be encoded in dna?
 		self.dims = np.array([round(random.uniform(c.minSideLen, c.maxSideLen), 1)
 											for dim in range(3)]) #random
+
+	def Set_Color(self):
 		if self.has_sensor:
 			self.color = "Green"
 		else:
 			self.color = "Blue"
-
 
 	def Print(self):
 		print(f"class uniqueNode:\n\tnumSelfEdge: {self.numSelfEdge}\n\tnumChildEdge: {self.numChildEdge} \
@@ -44,14 +46,13 @@ class BODY:
 	def __init__(self, dna, solutionID, seed):
 		self.seed = seed
 		self.dna = dna # list of [num selfEdges, num nextEdges] pairs
-		# orientationsQueue = [np.array([1,0,0]), np.array([0,1,0]), np.array([0,0,1])]
-		orientationsQueue = [np.array([0,0,1]), np.array([0,1,0])]
-		random.shuffle(orientationsQueue)
+		self.orientationsQueue = [np.array([1,0,0]), np.array([0,1,0]), np.array([0,0,1])]
+		# orientationsQueue = [np.array([0,0,1]), np.array([0,1,0])]
+		random.shuffle(self.orientationsQueue)
 		# initialize graph nodes
-		self.uniqueNodeList = [uniqueNode(instruction[0], instruction[1], orientationsQueue)
+		self.uniqueNodeList = [uniqueNode(instruction[0], instruction[1], self.orientationsQueue)
 							  	  for instruction in self.dna]
-		for node in self.uniqueNodeList:
-			node.Print()
+		self.PrintUniqueNodes()
 		self.initialPos = np.array([0, 0, 3])
 		self.Generate_Body(solutionID)
 		self.prevSensortoHiddenWeights = {} # {link name: float [-1,1]}
@@ -59,6 +60,12 @@ class BODY:
 		self.currSensortoHiddenWeights = {} # {link name: float [-1,1]}
 		self.currHiddentoMotorWeights = {} # {joint name: float [-1,1]}
 		self.Generate_Brain_nndf(solutionID)
+
+
+	def PrintUniqueNodes(self):
+		for node in self.uniqueNodeList:
+			node.Print()
+
 
 	def SaveToPickle(self, ID):
 		with open(f'BODY{ID}.pickle', 'wb') as handle:
@@ -222,7 +229,24 @@ class BODY:
 
 
 	def Mutate_Body(self):
-		pass
+
+		mutation_type = random.randint(0,2)
+		nodeidx = random.randint(0,len(self.uniqueNodeList)-1)
+		node = self.uniqueNodeList[nodeidx]
+		match mutation_type:
+			case 0: # change sensor presence
+				node.has_sensor = not node.has_sensor
+				node.Set_Color()
+			case 1: # change orientation
+				random.shuffle(self.orientationsQueue)
+				orientation = self.orientationsQueue[0]
+				if (orientation == node.orientation).all():
+					node.orientation = self.orientationsQueue[1]
+				else:
+					node.orientation = orientation
+			case 2:
+				node.dims = np.array([round(random.uniform(c.minSideLen, c.maxSideLen), 1)
+											for dim in range(3)]) #random
 
 
 	def Generate_Brain(self, myID):
