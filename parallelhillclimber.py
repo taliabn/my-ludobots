@@ -14,7 +14,7 @@ class PARALLEL_HILL_CLIMBER:
 		os.system("rm displacement*.txt")
 		os.system("rm tmp*.txt")
 		self.seed = c.seed
-		random.seed(self.seed)
+		# random.seed(self.seed)
 
 		if not os.path.exists(f"./{self.seed}"):
 			os.makedirs(f"./{self.seed}")
@@ -37,14 +37,14 @@ class PARALLEL_HILL_CLIMBER:
 		self.Evaluate(self.parents)
 		for currentGeneration in range(c.numberOfGenerations):
 			print(f"CURRENT GENERATION: {currentGeneration}")
-			self.Evolve_For_One_Generation()
+			self.Evolve_For_One_Generation(currentGeneration)
 			self.fitnessValues[currentGeneration] = self.Get_Best().fitness
 		self.Save_Fitness_Values()
 		
 	
-	def Evolve_For_One_Generation(self):
+	def Evolve_For_One_Generation(self, currentGeneration):
 		self.Spawn()
-		self.Mutate()
+		self.Mutate(currentGeneration)
 		self.Evaluate(self.children)
 		self.Print()
 		# self.WriteToLog()
@@ -67,9 +67,9 @@ class PARALLEL_HILL_CLIMBER:
 			self.nextAvailableID += 1
 
 	
-	def Mutate(self):
+	def Mutate(self, currentGeneration):
 		for child in self.children.values():
-			child.Mutate()
+			child.Mutate(currentGeneration)
 
 
 	def Select(self):

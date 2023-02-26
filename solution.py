@@ -49,12 +49,15 @@ class SOLUTION:
 		return self.fitness
 	
 
-	def Mutate(self):
-		m = (random.getrandbits(1))
-		if m:
+	def Mutate(self, generation):
+		# less likely to mutate body for later generations
+		probBody = 0.5 - 0.45*generation/c.numberOfGenerations
+		mutBody = random.choices(population=[0,1], weights=[1-probBody, probBody])
+		# m = (random.getrandbits(1))
+		if mutBody:
 			self.body.Mutate_Body()
 		self.body.Generate_Body(self.myID)
-		if not m:
+		if not mutBody:
 			self.body.Mutate_Brain()
 		self.body.Generate_Brain(self.myID)
 
