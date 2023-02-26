@@ -10,7 +10,7 @@ import constants as c
 class SIMULATION:
 
 	def __init__(self, directOrGUI, solutionID, seed):
-		print(f"\n STARTING {directOrGUI} SIMULATION FOR SEED {seed}, SOLUTION {solutionID}\n")
+		# print(f"\n STARTING SEIMULATION FOR SEED {seed}, SOLUTION {solutionID}\n")
 		if directOrGUI == "DIRECT":
 			self.physicsClient = p.connect(p.DIRECT)
 			self.stepTime = 0
@@ -26,6 +26,7 @@ class SIMULATION:
 		# only writes new world for first simulation (solutionID=0)
 		self.world = WORLD(initial_world = not int(solutionID)) 
 		self.robot = ROBOT(directOrGUI, solutionID, seed)
+		self.ID = solutionID
 
 
 	# runs simulation
@@ -40,10 +41,11 @@ class SIMULATION:
 			self.robot.Sense(i)
 			self.robot.Think()
 			self.robot.Act(i)
+		# print(f"\n FINISHED SIMULATION for {self.ID}\n")
 		
 
-	def Record_Displacement(self, solutionID):
-		self.robot.Record_Displacement(solutionID)
+	def Record_Displacement(self):
+		self.robot.Record_Displacement(self.ID)
 
 
 	# destructor

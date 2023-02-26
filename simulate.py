@@ -10,4 +10,4 @@ solutionID = sys.argv[2]
 seed = sys.argv[3]
 simulation = SIMULATION(directOrGUI, solutionID, seed)
 simulation.Run()
-simulation.Record_Displacement(solutionID)
+simulation.Record_Displacement()
