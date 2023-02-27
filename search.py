@@ -1,8 +1,11 @@
 from parallelhillclimber import PARALLEL_HILL_CLIMBER
 import time
+import sys 
+
 if __name__ == '__main__':
+	seed = sys.argv[1]
 	start_time = time.time()
-	phc = PARALLEL_HILL_CLIMBER()
+	phc = PARALLEL_HILL_CLIMBER(seed)
 	try:
 		phc.Evolve()
 	except PermissionError:

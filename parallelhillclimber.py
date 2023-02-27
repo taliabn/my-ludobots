@@ -13,16 +13,16 @@ from simulation import SIMULATION
 
 class PARALLEL_HILL_CLIMBER:
 
-	def __init__(self):
+	def __init__(self, seed):
 		os.system("rm displacement*.txt")
 		os.system("rm tmp*.txt")
-		self.seed = c.seed
+		self.seed = seed
 		# random.seed(self.seed)
 
 		if not os.path.exists(f"./{self.seed}"):
 			os.makedirs(f"./{self.seed}")
-		# else:
-		# 	raise Exception(f"ERROR: SEED DIR ALREADY EXISTS")
+		else:
+			raise Exception(f"ERROR: SEED DIR ALREADY EXISTS")
 		self.fitnessValues = np.empty(c.numberOfGenerations)
 		self.parents = {}
 		self.nextAvailableID = 0
@@ -38,7 +38,7 @@ class PARALLEL_HILL_CLIMBER:
 	def Evolve(self):
 		self.Evaluate(self.parents)
 		for currentGeneration in range(c.numberOfGenerations):
-			print(f"CURRENT GENERATION: {currentGeneration}")
+			print(f"\n\n################ CURRENT GENERATION: {currentGeneration} ################ ")
 			self.Evolve_For_One_Generation(currentGeneration)
 			self.fitnessValues[currentGeneration] = self.Get_Best().fitness
 			self.Save_Fitness_Values()
@@ -56,20 +56,18 @@ class PARALLEL_HILL_CLIMBER:
 	def Evaluate(self, solutions):
 		# task to run
 		def Run_Parallel_Simulation(solutionID):
-			print(f"\n STARTING SIMULATION FOR SEED {self.seed}, SOLUTION {solutionID}\n")
+			# print(f"\n STARTING SIMULATION FOR SEED {self.seed}, SOLUTION {solutionID}\n")
 			simulation = SIMULATION("DIRECT", solutionID, self.seed)
 			simulation.Run()
 			displacement = simulation.Return_Displacement()
-			print(f"RETURNING {displacement}")
+			# print(f"RETURNING {displacement}")
 			return displacement
 		
 		# workers = mp.cpu_count() - 1 = 7
 		pool = Pool(processes = 7)
 		inputs = [solution.myID for solution in solutions.values()]
-		print(f"INPUTS: {inputs}")
 		# outputs = [Run_Parallel_Simulation(id) for id in inputs]
 		outputs = pool.map(Run_Parallel_Simulation, inputs)
-		print(f"OUTPUTS: {outputs}")
 		for i, solution in solutions.items():
 			solution.Set_Fitness(displacement = outputs[i])
 			# print(solution.fitness)
@@ -133,7 +131,7 @@ class PARALLEL_HILL_CLIMBER:
 
 	def Save_Fitness_Values(self):
 		w = self.Get_Best()
-		print(f"FINAL WINNER for seed {self.seed}: solution {w.myID} with fitness {w.fitness}")
+		print(f"WINNER for seed {self.seed}: solution {w.myID} with fitness {w.fitness}")
 		file_path = f"./{self.seed}/fitnessValues"
 		try:
 			np.save(file_path, self.fitnessValues)
