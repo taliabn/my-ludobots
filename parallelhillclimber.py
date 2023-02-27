@@ -6,6 +6,9 @@ from datetime import datetime
 import pyrosim.pyrosim as pyrosim
 import random
 import numpy as np
+# import multiprocessing
+from pathos.multiprocessing import ProcessingPool as Pool
+from simulation import SIMULATION
 
 
 class PARALLEL_HILL_CLIMBER:
@@ -19,8 +22,7 @@ class PARALLEL_HILL_CLIMBER:
 		if not os.path.exists(f"./{self.seed}"):
 			os.makedirs(f"./{self.seed}")
 		# else:
-		# 	print(f"ERROR SEED DIR ALREADY EXISTS")
-		# 	exit()
+		# 	raise Exception(f"ERROR: SEED DIR ALREADY EXISTS")
 		self.fitnessValues = np.empty(c.numberOfGenerations)
 		self.parents = {}
 		self.nextAvailableID = 0
@@ -51,19 +53,36 @@ class PARALLEL_HILL_CLIMBER:
 		self.Select()
 
 
+
+
 	def Evaluate(self, solutions):
-		for solution in solutions.values():
-			solution.Start_Simulation("DIRECT")
-		for solution in solutions.values():
-			solution.Wait_For_Simulation_To_End()
+		# task to run
+		def Run_Parallel_Simulation(solutionID):
+			print(f"\n STARTING SIMULATION FOR SEED {self.seed}, SOLUTION {solutionID}\n")
+			simulation = SIMULATION("DIRECT", solutionID, self.seed)
+			simulation.Run()
+			fitness = simulation.Return_Displacement()
+			print(f"RETURNING {fitness}")
+			return fitness
+		
+		# workers = mp.cpu_count() - 1 = 7
+		pool = Pool(processes = 7)
+		inputs = [solution.myID for solution in solutions.values()]
+		print(f"INPUTS: {inputs}")
+		# outputs = [Run_Parallel_Simulation(id) for id in inputs]
+		outputs = pool.map(Run_Parallel_Simulation, inputs)
+		print(f"OUTPUTS: {outputs}")
+		for i, solution in solutions.items():
+			solution.Set_Fitness(outputs[i])
 			# print(solution.fitness)
-	
+
 
 	def Spawn(self):
 		self.children = {}
 		for i, parent in self.parents.items():
 			self.children[i] = copy.deepcopy(parent)
 			self.children[i].Set_ID(self.nextAvailableID)
+			self.children[i].Reset_Fitness()
 			self.nextAvailableID += 1
 
 	

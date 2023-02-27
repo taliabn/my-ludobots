@@ -54,6 +54,14 @@ class ROBOT:
 		self.nn.Update()
 
 
+	def Return_Displacement(self, solutionID):
+		# print(f"GETTING DISPLACEMENT FOR {solutionID}")
+		basePositionAndOrientation = p.getBasePositionAndOrientation(self.robotId)
+		basePosition = basePositionAndOrientation[0]
+		base_x = basePosition[0]
+		# print(f"RETURNING DISPLACEMENT FOR {solutionID}")
+		return base_x
+
 	def Record_Displacement(self, solutionID):
 		basePositionAndOrientation = p.getBasePositionAndOrientation(self.robotId)
 		basePosition = basePositionAndOrientation[0]

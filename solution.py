@@ -6,7 +6,7 @@ import time
 import constants as c
 from body import BODY
 import pickle
-
+from simulation import SIMULATION
 
 class SOLUTION:
 
@@ -17,6 +17,13 @@ class SOLUTION:
 		self.Generate_DNA()
 		# print(self.dna)
 		self.body = BODY(self.dna, self.myID, self.seed)
+
+
+	# def Run_Parallel_Simulation(self, directOrGUI):
+	# 	print(f"\n STARTING SEIMULATION FOR SEED {self.seed}, SOLUTION {self.myID}\n")
+	# 	simulation = SIMULATION(directOrGUI, self.myID, self.seed)
+	# 	simulation.Run()
+	# 	self.fitness =  simulation.Return_Displacement()
 
 
 	def Start_Simulation(self, directOrGUI):
@@ -49,15 +56,25 @@ class SOLUTION:
 		return self.fitness
 	
 
+	def Set_Fitness(self, value):
+		self.fitness = value
+
+
+	def Reset_Fitness(self):
+		self.fitness = None
+
+
 	def Mutate(self, generation):
 		# less likely to mutate body for later generations
 		probBody = 0.5 - 0.45*generation/c.numberOfGenerations
 		mutBody = random.choices(population=[0,1], weights=[1-probBody, probBody])
 		# m = (random.getrandbits(1))
 		if mutBody:
+			print(f"ID: {self.myID}, gen: {generation}, mutating BODY")
 			self.body.Mutate_Body()
 		self.body.Generate_Body(self.myID)
 		if not mutBody:
+			print(f"ID: {self.myID}, gen: {generation}, mutating BRAIN")
 			self.body.Mutate_Brain()
 		self.body.Generate_Brain(self.myID)
 

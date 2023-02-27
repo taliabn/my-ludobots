@@ -42,6 +42,10 @@ class SIMULATION:
 			self.robot.Act(i)
 		
 
+	def Return_Displacement(self):
+		return self.robot.Return_Displacement(self.ID)
+
+
 	def Record_Displacement(self):
 		self.robot.Record_Displacement(self.ID)
 
