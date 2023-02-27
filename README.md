@@ -1,7 +1,7 @@
 ## Description
 
 This repo contains work for the Northwestern University course Computer Science 396: Artificial Life. 
-Branches up until and including 'ludobots-final-project' follow the [ludobots](https://www.reddit.com/r/ludobots/) online course on Evolutionary Robotics
+Branches up through 'ludobots-final-project' follow the [ludobots](https://www.reddit.com/r/ludobots/) online course on Evolutionary Robotics.
 
 ## Installation
 
@@ -15,22 +15,32 @@ Before running anything, make sure to first activate the environment with
 ```bash
 conda activate <new environment name>
 ```
-
+## Usage
+Instructions on running the code are as follows:
 Use the command 
 ```bash 
-python search.py
+python search.py <seed>
 ``` 
 to start running the simulation. 
-To rerun a certain simulation, ensure the brain file is saved as "brain\<solutionID\>.nndf. 
-Then run the command 
+For running multiple searches in a row, first set the list of desired seeds in line 1 of the file `run-search.sh`. Then run the command
 ```bash
-python simulate.py GUI <solutionID>
+sh search.py
+```
+Both error messages and console outputs will be saved in the file "out<seed>.txt". A numpy array of fitness values as well as brain.nndf and body.urdf files for the best robots will be saved in a folder named <seed>.
+To analyze a certain search by showing and saving a fitness curve (plot of best fitness value for each generation), run the command:
+```bash
+python analyze.py GUI <solutionID> <seed>
+```
+To rerun a certain simulation in GUI mode, ensure the brain file is saved as "<seed>\brain<solutionID\>.nndf" and the body file is saved as "<seed>\body<solutionID\>.urdf". This will be the case if search.py is run properly. Then, run the command: 
+```bash
+python simulate.py GUI <solutionID> <seed>
 ```
 Parameters such as number of generations and population size, and simulation length can be set in the file `constants.py`.
 
 NOTE: certain lines use `os.system()` calls, which are operating system specific.
 The code is currently written for a windows machine using a bash terminal. 
 See [r/ludobots: parallelhillclimber](https://www.reddit.com/r/ludobots/wiki/parallelhc/) for details on how to change this.
+
 
 ## Assignment 7: random 3D morphologies
 [Assignment 7](https://youtube.com/shorts/HM3KmLzGZqs?feature=share), found on the [`random-3D-bodies`](https://github.com/taliabn/my-ludobots/tree/random-3D-bodies) branch, adds the capability to randomly generate morphologies.
@@ -84,26 +94,19 @@ The following parameters were used in the final simulations for this assignmment
 * `maxSideLen = 1`
 [1] "Evolving Virtual Creatures" K.Sims, Computer Graphics (Siggraph '94 Proceedings), July 1994, pp.15-22
 
+## from A 6:
+The robots consist of a chain of links on the floor connected by joints that can rotate around the z-axis. Touch sensors are placed on random links, and each link has a 50% chance of having a sensor. When running the simulation in GUI mode, links with sensors are colored green, and links without sensors are colored blue. Parameters dictating the range of link side lengths and the maximum number of links can be set in `constants.py`. There will always be a minimum of two links and one joint between them. 
+
+## Past Assignments
+
 ## Assignment 6: random 1D morphologies
-[Assignment 6](https://youtu.be/uXb1K-MACNE), found on the [`random-1D-bodies`](https://github.com/taliabn/my-ludobots/tree/random-1D-bodies) branch, adds the capability to randomly generate morphologies. The robots consist of a chain of links on the floor connected by joints that can rotate around the z-axis. Touch sensors are placed on random links, and each link has a 50% chance of having a sensor. When running the simulation in GUI mode, links with sensors are colored green, and links without sensors are colored blue. Parameters dictating the range of link side lengths and the maximum number of links can be set in `constants.py`. There will always be a minimum of two links and one joint between them. 
-
-#### Parameters
-The following parameters were used in the final simulations for this assignmment:
-* `maxNumLinks = 10`
-* `minSideLen = 0.1`
-* `maxSideLen = 2`
-* `populationSize = 1`
-* `numberOfGenerations = 1`
-
+[Assignment 6](https://youtu.be/uXb1K-MACNE) adds the capability to randomly generate morphologies in one dimensions. See the branch [`random-1D-bodies`](https://github.com/taliabn/my-ludobots/tree/random-1D-bodies) for further details.
 
 ## Assignment 5: Ludobots Final Project
-The [final project](https://youtu.be/qypMeX9zdyQ), found on the [`ludobots-final-project`](https://github.com/taliabn/my-ludobots/tree/ludobots-final-project) branch, demonstrates the use of a Parallel hillclimber and an evolution through random mutations to create robots that can climb a set of stairs.
-The fitness function used to evaluate the robots is total euclidean distance from the top of the pyramid to the final position of the robot's root link (torso).
-The goal is to minimize fitness, where 0 is the best possible fitness.
-Brains also feature a layer of hidden neurons.
+The [Ludobots final project](https://youtu.be/qypMeX9zdyQ),  demonstrates the use of a Parallel hillclimber and an evolution through random mutations to create robots that can climb a set of stairs. See the branch [`ludobots-final-project`](https://github.com/taliabn/my-ludobots/tree/ludobots-final-project) for further details.
 
 ## Assignments 1-4:
-See [ludobots](https://www.reddit.com/r/ludobots/) online course on Evolutionary Robotics for more info.
+See [ludobots](https://www.reddit.com/r/ludobots/) online course on Evolutionary Robotics for further details. Code can be found in branches up until 'ludobots-final-project'.
 
 ## Contact
 
