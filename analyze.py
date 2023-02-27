@@ -1,12 +1,16 @@
 import numpy as np
-import matplotlib.pyplot
+import matplotlib.pyplot as plt
 import sys
+import constants as c
 
-
-seed = sys.argv[1]
-fitnessValues = np.load(f"./{seed}/fitnessValues.npy")
-print(fitnessValues)
-matplotlib.pyplot.plot(fitnessValues*-1, label=seed, lw=3)
-matplotlib.pyplot.legend()
-matplotlib.pyplot.savefig(f"./{seed}/fitnessPlot.jpg")
-matplotlib.pyplot.show()
+fig, ax = plt.subplots()
+for seed in sys.argv[1:]:
+	fitnessValues = np.load(f"./{seed}/fitnessValues.npy")
+	ax.plot(fitnessValues*-1, label=seed, lw=2)
+ax.set_title(f"Best fitness over time \n(population size = {c.populationSize})")
+ax.set_xlabel("Generation")
+ax.set_ylabel(f"Fitness \n(displacement along x axis)")
+plt.legend(title='seed', loc='lower right')
+plt.margins(x=0)
+plt.savefig(f"./fitnessPlot.png")
+plt.show()
