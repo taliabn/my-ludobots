@@ -1,19 +1,12 @@
 import numpy as np
 import matplotlib.pyplot
+import sys
 
-# read and plot sensor values
-backLegSensorValues = np.load("data/backLegSensorValues.npy")
-frontLegSensorValues = np.load("data/frontLegSensorValues.npy")
-matplotlib.pyplot.plot(backLegSensorValues, label="BackLeg", lw=3)
-matplotlib.pyplot.plot(frontLegSensorValues, label="FrontLeg", lw=1)
+
+seed = sys.argv[1]
+fitnessValues = np.load(f"./{seed}/fitnessValues.npy")
+print(fitnessValues)
+matplotlib.pyplot.plot(fitnessValues*-1, label=seed, lw=3)
 matplotlib.pyplot.legend()
+matplotlib.pyplot.savefig(f"./{seed}/fitnessPlot.jpg")
 matplotlib.pyplot.show()
-
-# read and plot targetAngles
-targetAnglesBackLeg = np.load("data/targetAnglesBackLeg.npy")
-targetAnglesFrontLeg = np.load("data/targetAnglesFrontLeg.npy")
-matplotlib.pyplot.plot(targetAnglesBackLeg, label="BackLeg Target Angles", lw=3)
-matplotlib.pyplot.plot(targetAnglesFrontLeg, label="FrontLeg Target Angles", lw=1)
-matplotlib.pyplot.legend()
-matplotlib.pyplot.show()
-
