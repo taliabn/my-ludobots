@@ -246,11 +246,11 @@ class BODY:
 		node = self.uniqueNodeList[nodeidx]
 		match mutation_type:
 			case 0: # change sensor presence
-				print("MUTATING SENSOR")
+				# print("MUTATING SENSOR")
 				node.has_sensor = not node.has_sensor
 				node.Set_Color()
 			case 1: # change orientation
-				print("MUTATING ORIENTATION")
+				# print("MUTATING ORIENTATION")
 				random.shuffle(self.orientationsQueue)
 				orientation = self.orientationsQueue[0]
 				if (orientation == node.orientation).all():
@@ -258,7 +258,7 @@ class BODY:
 				else:
 					node.orientation = orientation
 			case 2:
-				print("MUTATING DIMENSIONS")
+				# print("MUTATING DIMENSIONS")
 				node.dims = np.array([round(random.uniform(c.minSideLen, c.maxSideLen), 1)
 											for dim in range(3)]) #random
 			case 3: # make one of these mutations half as likely
@@ -269,7 +269,7 @@ class BODY:
 					else:
 						node.numChildEdge = 2
 				else:
-					print("MUTATING CLONES")
+					# print("MUTATING CLONES")
 					clones = node.numSelfEdge
 					if clones == 0 or random.getrandbits(1):
 						node.numSelfEdge = clones + 1
@@ -328,10 +328,10 @@ class BODY:
 	def Mutate_Brain(self):
 		m = (random.getrandbits(1))
 		if m:
-			print("MUTATING BRAIN SENSOR TO HIDDEN WEIGHT")
+			# print("MUTATING BRAIN SENSOR TO HIDDEN WEIGHT")
 			self.currSensortoHiddenWeights[random.choice(self.sensorLinks)] = random.random() * 2 -1
 		else:
-			print("MUTATING BRAIN HIDDEN TO MOTOR WEIGHT")
+			# print("MUTATING BRAIN HIDDEN TO MOTOR WEIGHT")
 			self.currHiddentoMotorWeights[random.choice(self.allJoints)] = random.random() * 2 -1
 
 
