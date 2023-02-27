@@ -147,7 +147,6 @@ class BODY:
 
 
 	def Generate_Body_urdf(self, myID):
-		print(f"GENERATING BODY {myID}")
 		# function to recursively add links
 		def add_link(prevUniqueNode,  prevAbsPos, prevLinkName, currUniqueNode, currClone, currChild, currLinkName, growthDir):
 			# print("RECRUSING\n")
@@ -242,15 +241,16 @@ class BODY:
 
 
 	def Mutate_Body(self):
-
-		mutation_type = random.randint(0,2)
+		mutation_type = random.randint(0,3)
 		nodeidx = random.randint(0,len(self.uniqueNodeList)-1)
 		node = self.uniqueNodeList[nodeidx]
 		match mutation_type:
 			case 0: # change sensor presence
+				print("MUTATING SENSOR")
 				node.has_sensor = not node.has_sensor
 				node.Set_Color()
 			case 1: # change orientation
+				print("MUTATING ORIENTATION")
 				random.shuffle(self.orientationsQueue)
 				orientation = self.orientationsQueue[0]
 				if (orientation == node.orientation).all():
@@ -258,8 +258,24 @@ class BODY:
 				else:
 					node.orientation = orientation
 			case 2:
+				print("MUTATING DIMENSIONS")
 				node.dims = np.array([round(random.uniform(c.minSideLen, c.maxSideLen), 1)
 											for dim in range(3)]) #random
+			case 3: # make one of these mutations half as likely
+				if (random.getrandbits(1)):
+					children = node.numChildEdge
+					if children == 2:
+						node.numChildEdge = 1
+					else:
+						node.numChildEdge = 2
+				else:
+					print("MUTATING CLONES")
+					clones = node.numSelfEdge
+					if clones == 0 or random.getrandbits(1):
+						node.numSelfEdge = clones + 1
+					else:
+						node.numChildEdge = clones - 1
+			
 
 
 	def Generate_Brain(self, myID):
@@ -312,8 +328,10 @@ class BODY:
 	def Mutate_Brain(self):
 		m = (random.getrandbits(1))
 		if m:
+			print("MUTATING BRAIN SENSOR TO HIDDEN WEIGHT")
 			self.currSensortoHiddenWeights[random.choice(self.sensorLinks)] = random.random() * 2 -1
 		else:
+			print("MUTATING BRAIN HIDDEN TO MOTOR WEIGHT")
 			self.currHiddentoMotorWeights[random.choice(self.allJoints)] = random.random() * 2 -1
 
 

@@ -67,7 +67,7 @@ class SOLUTION:
 	def Mutate(self, generation):
 		# less likely to mutate body for later generations
 		probBody = 0.5 - 0.45*generation/c.numberOfGenerations
-		mutBody = random.choices(population=[0,1], weights=[1-probBody, probBody])
+		mutBody = random.choices(population=[0,1], weights=[1-probBody, probBody])[0]
 		# m = (random.getrandbits(1))
 		if mutBody:
 			print(f"ID: {self.myID}, gen: {generation}, mutating BODY")
