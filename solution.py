@@ -39,25 +39,13 @@ class SOLUTION:
 		self.dna[-1][-1] = 0
 
 
-	def Wait_For_Simulation_To_End(self):
-		print(f"WAITING FOR {self.myID}.....")
-		while not os.path.exists("displacement" + str(self.myID) + ".txt"): # do not know if previous simulation finished and fitness file is ready
-			time.sleep(0.01)
-		print(f"ESCAPED WAIT, READING DISPLACEMENT FILE FOR {self.myID}")
-		displacementFileName  = f"displacement{self.myID}.txt"
-		with open(displacementFileName, "r") as f:
-			displacement = float(f.read())
-		self.fitness = displacement/self.body.wingspan
-		os.remove(displacementFileName) # OS specific call
-		print(f"REMOVED DISPLACEMENT FILE FOR {self.myID}")
-
-
 	def Get_Fitness(self):
 		return self.fitness
 	
 
 	def Set_Fitness(self, displacement):
-		self.fitness = round(displacement/self.body.wingspan, 3)
+		# self.fitness = round(displacement/self.body.wingspan, 3)
+		self.fitness = round(displacement, 3)
 
 
 	def Reset_Fitness(self):
@@ -70,11 +58,11 @@ class SOLUTION:
 		mutBody = random.choices(population=[0,1], weights=[1-probBody, probBody])[0]
 		# m = (random.getrandbits(1))
 		if mutBody:
-			print(f"ID: {self.myID}, gen: {generation}, mutating BODY")
+			# print(f"ID: {self.myID}, gen: {generation}, mutating BODY")
 			self.body.Mutate_Body()
 		self.body.Generate_Body(self.myID)
 		if not mutBody:
-			print(f"ID: {self.myID}, gen: {generation}, mutating BRAIN")
+			# print(f"ID: {self.myID}, gen: {generation}, mutating BRAIN")
 			self.body.Mutate_Brain()
 		self.body.Generate_Brain(self.myID)
 
