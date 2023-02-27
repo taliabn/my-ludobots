@@ -1,7 +1,6 @@
-import random
 # number of evolutions
-populationSize = 50
-numberOfGenerations = 125
+populationSize = 30
+numberOfGenerations = 150
 # number of times to step through simulation
 steps = 1000
 # length of each time-step in seconds
