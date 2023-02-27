@@ -56,8 +56,8 @@ class SOLUTION:
 		return self.fitness
 	
 
-	def Set_Fitness(self, value):
-		self.fitness = value
+	def Set_Fitness(self, displacement):
+		self.fitness = round(displacement/self.body.wingspan, 3)
 
 
 	def Reset_Fitness(self):

@@ -41,7 +41,7 @@ class PARALLEL_HILL_CLIMBER:
 			print(f"CURRENT GENERATION: {currentGeneration}")
 			self.Evolve_For_One_Generation(currentGeneration)
 			self.fitnessValues[currentGeneration] = self.Get_Best().fitness
-		self.Save_Fitness_Values()
+			self.Save_Fitness_Values()
 		
 	
 	def Evolve_For_One_Generation(self, currentGeneration):
@@ -53,17 +53,15 @@ class PARALLEL_HILL_CLIMBER:
 		self.Select()
 
 
-
-
 	def Evaluate(self, solutions):
 		# task to run
 		def Run_Parallel_Simulation(solutionID):
 			print(f"\n STARTING SIMULATION FOR SEED {self.seed}, SOLUTION {solutionID}\n")
 			simulation = SIMULATION("DIRECT", solutionID, self.seed)
 			simulation.Run()
-			fitness = simulation.Return_Displacement()
-			print(f"RETURNING {fitness}")
-			return fitness
+			displacement = simulation.Return_Displacement()
+			print(f"RETURNING {displacement}")
+			return displacement
 		
 		# workers = mp.cpu_count() - 1 = 7
 		pool = Pool(processes = 7)
@@ -73,7 +71,7 @@ class PARALLEL_HILL_CLIMBER:
 		outputs = pool.map(Run_Parallel_Simulation, inputs)
 		print(f"OUTPUTS: {outputs}")
 		for i, solution in solutions.items():
-			solution.Set_Fitness(outputs[i])
+			solution.Set_Fitness(displacement = outputs[i])
 			# print(solution.fitness)
 
 
@@ -137,4 +135,7 @@ class PARALLEL_HILL_CLIMBER:
 		w = self.Get_Best()
 		print(f"FINAL WINNER for seed {self.seed}: solution {w.myID} with fitness {w.fitness}")
 		file_path = f"./{self.seed}/fitnessValues"
-		np.save(file_path, self.fitnessValues)
+		try:
+			np.save(file_path, self.fitnessValues)
+		except:
+			pass
