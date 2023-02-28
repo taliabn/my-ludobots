@@ -1,14 +1,12 @@
-from solution import SOLUTION
-import constants as c
 import copy
 import os
 from datetime import datetime
 import pyrosim.pyrosim as pyrosim
-import random
 import numpy as np
-# import multiprocessing
 from pathos.multiprocessing import ProcessingPool as Pool
+from solution import SOLUTION
 from simulation import SIMULATION
+import constants as c
 
 
 class PARALLEL_HILL_CLIMBER:
@@ -17,12 +15,12 @@ class PARALLEL_HILL_CLIMBER:
 		os.system("rm displacement*.txt")
 		os.system("rm tmp*.txt")
 		self.seed = seed
-		# random.seed(self.seed)
 
 		if not os.path.exists(f"./{self.seed}"):
 			os.makedirs(f"./{self.seed}")
 		else:
 			raise Exception(f"ERROR: SEED DIR ALREADY EXISTS")
+		
 		self.fitnessValues = np.empty(c.numberOfGenerations)
 		self.parents = {}
 		self.nextAvailableID = 0
@@ -56,21 +54,17 @@ class PARALLEL_HILL_CLIMBER:
 	def Evaluate(self, solutions):
 		# task to run
 		def Run_Parallel_Simulation(solutionID):
-			# print(f"\n STARTING SIMULATION FOR SEED {self.seed}, SOLUTION {solutionID}\n")
 			simulation = SIMULATION("DIRECT", solutionID, self.seed)
 			simulation.Run()
 			displacement = simulation.Return_Displacement()
-			# print(f"RETURNING {displacement}")
 			return displacement
 		
 		# workers = mp.cpu_count() - 1 = 7
 		pool = Pool(processes = 7)
 		inputs = [solution.myID for solution in solutions.values()]
-		# outputs = [Run_Parallel_Simulation(id) for id in inputs]
 		outputs = pool.map(Run_Parallel_Simulation, inputs)
 		for i, solution in solutions.items():
 			solution.Set_Fitness(displacement = outputs[i])
-			# print(solution.fitness)
 
 
 	def Spawn(self):
@@ -125,7 +119,7 @@ class PARALLEL_HILL_CLIMBER:
 	def Show_Best(self):
 		winning_parent = self.Get_Best()
 		print("SHOWING BEST")
-		print(f"WINNING FITNESS: {winning_parent.fitness} from solution {winning_parent.myID}")
+		print(f"BEST FITNESS: {winning_parent.fitness} from solution {winning_parent.myID}")
 		winning_parent.Start_Simulation("GUI")
 
 
@@ -136,4 +130,4 @@ class PARALLEL_HILL_CLIMBER:
 		try:
 			np.save(file_path, self.fitnessValues)
 		except:
-			pass
+			print(f"ERROR: Unable to save fitness values")

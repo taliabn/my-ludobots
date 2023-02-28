@@ -18,13 +18,12 @@ class SIMULATION:
 			p.configureDebugVisualizer(p.COV_ENABLE_GUI,0)
 			self.stepTime = c.stepLength
 		else:
-			print("ERROR: invalid run mode")
-			exit()
+			raise Exception("ERROR: invalid run mode")
 		p.setAdditionalSearchPath(pybullet_data.getDataPath())
 		p.setGravity(0,0,-9.8)
 		# only writes new world for first simulation (solutionID=0)
 		self.world = WORLD(initial_world = not int(solutionID)) 
-		self.robot = ROBOT(directOrGUI, solutionID, seed)
+		self.robot = ROBOT(solutionID, seed)
 		self.ID = solutionID
 
 
@@ -40,14 +39,10 @@ class SIMULATION:
 			self.robot.Sense(i)
 			self.robot.Think()
 			self.robot.Act(i)
-		
+
 
 	def Return_Displacement(self):
-		return self.robot.Return_Displacement(self.ID)
-
-
-	def Record_Displacement(self):
-		self.robot.Record_Displacement(self.ID)
+		return self.robot.Return_Displacement()
 
 
 	# destructor

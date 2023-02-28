@@ -3,16 +3,13 @@ import pyrosim.pyrosim as pyrosim
 from pyrosim.neuralNetwork import NEURAL_NETWORK
 from sensor import SENSOR
 from motor import MOTOR
-from datetime import datetime
-import os
 import constants as c
 
 class ROBOT:
 
-	def __init__(self, directOrGUI, solutionID, seed):
+	def __init__(self, solutionID, seed):
 
 		self.robotId = p.loadURDF(f"./{seed}/body{solutionID}.urdf") # floor
-		# self.robotId = p.loadURDF(f"body.urdf") # floor
 		pyrosim.Prepare_To_Simulate(self.robotId)
 		self.nn = NEURAL_NETWORK(f"./{seed}/brain{solutionID}.nndf")
 		self.Prepare_To_Sense()
@@ -54,25 +51,11 @@ class ROBOT:
 		self.nn.Update()
 
 
-	def Return_Displacement(self, solutionID):
-		# print(f"GETTING DISPLACEMENT FOR {solutionID}")
+	def Return_Displacement(self):
 		basePositionAndOrientation = p.getBasePositionAndOrientation(self.robotId)
 		basePosition = basePositionAndOrientation[0]
 		base_x = basePosition[0]
-		# print(f"RETURNING DISPLACEMENT FOR {solutionID}")
 		return base_x
-
-	def Record_Displacement(self, solutionID):
-		basePositionAndOrientation = p.getBasePositionAndOrientation(self.robotId)
-		basePosition = basePositionAndOrientation[0]
-		base_x = basePosition[0]
-		tmpFileName = f"tmp{solutionID}.txt"
-		with open(tmpFileName, "w") as f:
-			f.write(str(base_x))
-		print(f"WRITING DISPLACEMENT FOR {solutionID}")
-		displacementFileName = f"displacement{solutionID}.txt"
-		os.rename(tmpFileName, displacementFileName)
-		print(f"DONE WRITING DISPLACEMENT FOR {solutionID}")
 
 
 	# returns euclidean distance to top, center point on pyramid

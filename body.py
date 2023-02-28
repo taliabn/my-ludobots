@@ -1,10 +1,8 @@
 import pyrosim.pyrosim as pyrosim
 import numpy as np
-import os
 import random
 import constants as c
-import pickle
-from collections import Counter
+
 
 class uniqueNode:
 
@@ -46,9 +44,7 @@ class BODY:
 	def __init__(self, dna, solutionID, seed):
 		self.seed = seed
 		self.dna = dna # list of [num selfEdges, num nextEdges] pairs
-		# print(dna)
 		self.orientationsQueue = [np.array([1,0,0]), np.array([0,1,0]), np.array([0,0,1])]
-		# orientationsQueue = [np.array([0,0,1]), np.array([0,1,0])]
 		random.shuffle(self.orientationsQueue)
 		# initialize graph nodes
 		self.uniqueNodeList = [uniqueNode(instruction[0], instruction[1], self.orientationsQueue)
@@ -68,16 +64,6 @@ class BODY:
 			node.Print()
 
 
-	def SaveToPickle(self, ID):
-		with open(f'BODY{ID}.pickle', 'wb') as handle:
-			pickle.dump(self, handle, protocol=pickle.HIGHEST_PROTOCOL)
-
-
-	# def fetchLinkID(self):
-	# 	self.availableLinkID += 1
-	# 	return self.availableLinkID
-
-
 	def switchDirection(self, dir, orientation):
 		return np.logical_not(orientation)*dir + orientation*-1 #type: ignore
 	
@@ -85,11 +71,9 @@ class BODY:
 	def has_space(self, absPos, size, tol=0.01):
 		if [absPos - size/2][0][2] <= 0:
 			# below floor
-			# print(f"has_space false: underground")
 			return False 
 		for block in self.filledSpaces:
 			if (sum(block[0] >= (absPos + size/2)) == 0) and  (sum((absPos - size/2) >= block[1]) == 0):
-				# print(f"has_space false: overlapped with : {block}")
 				return False	#overlap
 
 		return True
@@ -149,7 +133,6 @@ class BODY:
 	def Generate_Body_urdf(self, myID):
 		# function to recursively add links
 		def add_link(prevUniqueNode,  prevAbsPos, prevLinkName, currUniqueNode, currClone, currChild, currLinkName, growthDir):
-			# print("RECRUSING\n")
 			currNode = self.uniqueNodeList[currUniqueNode]
 			prevNode = self.uniqueNodeList[prevUniqueNode]
 			
@@ -246,11 +229,9 @@ class BODY:
 		node = self.uniqueNodeList[nodeidx]
 		match mutation_type:
 			case 0: # change sensor presence
-				# print("MUTATING SENSOR")
 				node.has_sensor = not node.has_sensor
 				node.Set_Color()
 			case 1: # change orientation
-				# print("MUTATING ORIENTATION")
 				random.shuffle(self.orientationsQueue)
 				orientation = self.orientationsQueue[0]
 				if (orientation == node.orientation).all():
@@ -258,7 +239,6 @@ class BODY:
 				else:
 					node.orientation = orientation
 			case 2:
-				# print("MUTATING DIMENSIONS")
 				node.dims = np.array([round(random.uniform(c.minSideLen, c.maxSideLen), 1)
 											for dim in range(3)]) #random
 			case 3: # make one of these mutations half as likely
@@ -269,7 +249,6 @@ class BODY:
 					else:
 						node.numChildEdge = 2
 				else:
-					# print("MUTATING CLONES")
 					clones = node.numSelfEdge
 					if clones == 0 or random.getrandbits(1):
 						node.numSelfEdge = clones + 1
@@ -290,7 +269,6 @@ class BODY:
 		pyrosim.Start_URDF(f"./{self.seed}/brain{myID}.nndf")
 		# create hidden neurons
 		for i in  range(c.numHiddenNeurons):
-			# print(f"hidden neuron {neuronName}")
 			pyrosim.Send_Hidden_Neuron(name = i)
 
 		currNeuronName = c.numHiddenNeurons
@@ -308,7 +286,6 @@ class BODY:
 			 						targetNeuronName = i, 
 									weight = weight)
 				currNeuronName += 1
-		# print("hidden to motor")
 		# sensor neurons and sensor-->hidden synapses
 		for i in  range(c.numHiddenNeurons):
 			for joint in self.allJoints: 
@@ -328,10 +305,8 @@ class BODY:
 	def Mutate_Brain(self):
 		m = (random.getrandbits(1))
 		if m:
-			# print("MUTATING BRAIN SENSOR TO HIDDEN WEIGHT")
 			self.currSensortoHiddenWeights[random.choice(self.sensorLinks)] = random.random() * 2 -1
 		else:
-			# print("MUTATING BRAIN HIDDEN TO MOTOR WEIGHT")
 			self.currHiddentoMotorWeights[random.choice(self.allJoints)] = random.random() * 2 -1
 
 
@@ -344,5 +319,4 @@ class BODY:
 				min_x = link[0][0]
 			if link[1][0] > max_x:
 				max_x = link[1][0]
-		# print(f"WINGSPAN: {max_x - min_x}")
 		self.wingspan =  max_x - min_x
