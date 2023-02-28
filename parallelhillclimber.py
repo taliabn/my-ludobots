@@ -6,6 +6,7 @@ import numpy as np
 from pathos.multiprocessing import ProcessingPool as Pool
 from solution import SOLUTION
 from simulation import SIMULATION
+from world import WORLD
 import constants as c
 
 
@@ -25,8 +26,7 @@ class PARALLEL_HILL_CLIMBER:
 		self.parents = {}
 		self.nextAvailableID = 0
 
-		pyrosim.Start_SDF("world.sdf")
-		pyrosim.End()
+		WORLD()
 
 		for i in range(c.populationSize):
 			self.parents[i] = SOLUTION(self.nextAvailableID, self.seed)
@@ -54,7 +54,7 @@ class PARALLEL_HILL_CLIMBER:
 	def Evaluate(self, solutions):
 		# task to run
 		def Run_Parallel_Simulation(solutionID):
-			simulation = SIMULATION("DIRECT", solutionID, self.seed)
+			simulation = SIMULATION("GUI", solutionID, self.seed)
 			simulation.Run()
 			displacement = simulation.Return_Displacement()
 			return displacement
