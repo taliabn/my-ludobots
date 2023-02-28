@@ -46,6 +46,8 @@ NOTE: The code has only been tested running from a Git Bash terminal on a window
 The fitness function used to select creatures after each generation of evolution is displacement of the root link in the negative x direction. A hillclimber algorithm is used, meaning that parents are compared to children, and if the child has a better fitness, it replaces the parent in the population. Figure 1 shows an example of evolution for five trials, each starting from a different random seed. [These parameters](#parameters) were used in this simulation, and can be changed in `constants.py`.
 
 ![Line graph of fitness curves](/figures/a8-fitness-curves.png )
+
+
 **Figure 1. Fitness for five trials, each for 150 generations with a population of 30**
 
 <br>
