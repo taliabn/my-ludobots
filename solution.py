@@ -14,10 +14,6 @@ class SOLUTION:
 		self.body = BODY(self.dna, self.myID, self.seed)
 
 
-	def Start_Simulation(self, directOrGUI):
-		os.system(f"start /B python simulate.py  {directOrGUI} {self.myID} {self.seed}") # OS specific call
-
-
 	def Generate_DNA(self):
 		self.dna = [[random.randint(0, c.maxNumSelfEdges),random.randint(1,c.maxNumChildEdges)] 
 	      				for node in range(random.randint(2, (c.maxNumNodes)))]

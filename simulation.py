@@ -21,8 +21,6 @@ class SIMULATION:
 			raise Exception("ERROR: invalid run mode")
 		p.setAdditionalSearchPath(pybullet_data.getDataPath())
 		p.setGravity(0,0,-9.8)
-		# only writes new world for first simulation (solutionID=0)
-		# self.world = WORLD(initial_world = not int(solutionID)) 
 		self.robot = ROBOT(solutionID, seed)
 		p.loadSDF("world.sdf")
 		p.loadURDF("plane.urdf") # floor

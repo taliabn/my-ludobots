@@ -13,8 +13,6 @@ import constants as c
 class PARALLEL_HILL_CLIMBER:
 
 	def __init__(self, seed):
-		os.system("rm displacement*.txt")
-		os.system("rm tmp*.txt")
 		self.seed = seed
 
 		if not os.path.exists(f"./{self.seed}"):
@@ -54,7 +52,7 @@ class PARALLEL_HILL_CLIMBER:
 	def Evaluate(self, solutions):
 		# task to run
 		def Run_Parallel_Simulation(solutionID):
-			simulation = SIMULATION("GUI", solutionID, self.seed)
+			simulation = SIMULATION("DIRECT", solutionID, self.seed)
 			simulation.Run()
 			displacement = simulation.Return_Displacement()
 			return displacement
