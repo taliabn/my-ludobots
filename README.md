@@ -133,14 +133,14 @@ It is important to note that certain types of mutations are not permitted, namel
 
 ## Parallel Computing
 Since evolution trials are computationally expensive and time intensive to run, this version of the code allows for parallel execution of simulations using the [`pathos`](https://pypi.org/project/pathos/) multiprocessing framework. Previous iterations of the code ran simulations concurrently, but coordination and communication between processes used disk files as an intermediate, which was slow and caused the simulation to sometimes raise file permission errors. The new method using multiprocessing circumvents that error and explicitly instructs the simulation processes to run in parallel, which was not gauranteed in previous versions of the code.   
-Simulations for assignment 8 were run using 7 logical CPUs on a windows machine that has 8 total available. 
+Simulations for assignment 8 were run using 7 logical CPUs on a windows machine that has 8 total available.
 
 <br>
 
 ## Parameters
 The following parameters were used in the final simulations for assignmment 8:
-* `populationSize = 2`
-* `numberOfGenerations = 2`
+* `populationSize = 30`
+* `numberOfGenerations = 150`
 * `steps = 1000`
 * `stepLength = 1/120`
 * `numHiddenNeurons = 4`
