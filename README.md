@@ -42,7 +42,8 @@ NOTE: The code has only been tested running from a Git Bash terminal on a window
 # Assignment 8: random 3D morphologies
 [Assignment 8](https://youtu.be/nzlCZm1mh3U), found on the [`evolve-random-body`](https://github.com/taliabn/my-ludobots/tree/evolve-random-body) branch, adds the capability to evolve both brains and bodies simultaneously.
 
-## Evaluation
+## Simulation Results
+### Evaluation
 The fitness function used to select creatures after each generation of evolution is displacement of the root link in the negative x direction. A hillclimber algorithm is used, meaning that parents are compared to children, and if the child has a better fitness, it replaces the parent in the population. Figure 1 shows an example of evolution for five trials, each starting from a different random seed. [These parameters](#parameters) were used in this simulation, and can be changed in `constants.py`.
 
 ![Line graph of fitness curves](/figures/a8-fitness-curves.png )
@@ -50,10 +51,26 @@ The fitness function used to select creatures after each generation of evolution
 
 **Figure 1. Fitness for five trials, each for 150 generations with a population of 30**
 
-<br>
+
+### Fitness function flaws
+One issue with this fitness function is that sometimes tall creatures that fall over in the x direction are favored. To mitigate this risk, starting position of the root was lowered from [0,0,3] to [0,0,1.5]. This reduced the chance of winning creatures being those that fall, but has the disadvantage of limitting the potential morphospace by allowing for fewer links to grow in the z direction.  
+
+Number of body lengths traveled in the x direction was also tested as a fitness function, but this led to evolution focusing more on making creatures very skinny rather than optimizing for locomotion. Using total displacement as the, which was the final choice, ought not to be too biased towards large creatures because displacement is measured from the center of the root link, which is usually towards the middle of the body.
+
+
+### Conclusions
+From this simulation, there were several common features found in the most successful evolved creatures. This [video](https://youtu.be/nzlCZm1mh3U) demonstrates both random and evolved bodies in action. In general, many of the best creatures had some (not all) of the following traits:
+* Sensors on links touching the ground (green cubes)
+* No sprawling body plans, relatively compact
+* Bilateral symmetry
+* Galloping-like motion
+* Non-sensing base on top of single row of identical "legs"
+* "Tails" helping the creature balance and lean in the correct direction
+
+Note that many of the best body plans appear to primarily grow along one axis, but the morphospace allows for more diverse structures. See the following section for details.
 
 ## Method to Generate Bodies
-3D bodies are recursively generated using graph-based body plans, a mehod that is heavily influenced by [Karl Sims'](https://www.karlsims.com/evolved-virtual-creatures.html) work<sup>[1]</sup>.
+3D bodies are recursively generated using graph-based body plans, a method that is heavily influenced by [Karl Sims'](https://www.karlsims.com/evolved-virtual-creatures.html) work<sup>[[1]](#1-evolving-virtual-creatures-ksims-computer-graphics-siggraph-94-proceedings-july-1994-pp15-22)</sup>.
 
 Properties of creatures are divided into two categories, those randomly generated for each creature and those determined by "DNA" genotype that identifies a general body plan. This means that it is *not* a direct encoding between phenotypes and genotypes. See Table 1  for a summary. The body plan genotype graph encodes the number of uniqe link types, number of children for each link, and number of clones of each link (self edges). Each unique link (represented as a `UniqueNode` class in `body.py`) has its own dimensions, joint axis, orientation, and presence of sensor and corresponding color. See Figure 2 for an example of how body plans are generated.   
 
@@ -76,7 +93,6 @@ Note that this *indirect encoding* mechanism has an important implication: a sin
 
 To ensure that body plans follow basic laws of physics, before adding a link to the body, we check that there is no existing link in the same absolute position, preventing overlapping body parts. This means that some links specified by the genotype may not end up in the final body. To allow for freer growth in the z-direction, the creature starts at an absolute position of [0,0,1.5] and drops to the ground when the simulation starts. Additionally, we check that the absolute z position of a link isn't negative (i.e below the floor) before adding it.
 
-##### [1] "Evolving Virtual Creatures" K.Sims, Computer Graphics (Siggraph '94 Proceedings), July 1994, pp.15-22  
 
 ### Benefits:
 * Duplicated body parts create symmetry, which mimics nature
@@ -86,8 +102,12 @@ To ensure that body plans follow basic laws of physics, before adding a link to 
 * linear graph structure: each unique node only connects to next unique node
 * 2 children edges per node maximum
 * can only branch at right angles
-* symmetry can limit the potential morphospace
+* symmetry can limit the potential morphospace  
 
+
+<br>
+
+##### [1] "Evolving Virtual Creatures" K.Sims, Computer Graphics (Siggraph '94 Proceedings), July 1994, pp.15-22.  
 <br>
 
 ## Method to Generate Brains
@@ -112,7 +132,8 @@ It is important to note that certain types of mutations are not permitted, namel
 <br>
 
 ## Parallel Computing
-Since evolution trials are computationally expensive and time intensive to run, this version of the code allows for parallel execution of simulations using the [`pathos`](https://pypi.org/project/pathos/) multiprocessing framework. Simulations for assignment 8 were run using 7 logical CPUs on a windows machine that has 8 total available. Previous iterations of the code ran simulations concurrently, but coordination and communication between processes used disk files as an intermediate, which was slow and caused the simulation to sometimes raise file permission errors. The new method using multiprocessing circumvents that error and explicitly instructs the simulation processes to run in parallel, which was not gauranteed in previous versions of the code. 
+Since evolution trials are computationally expensive and time intensive to run, this version of the code allows for parallel execution of simulations using the [`pathos`](https://pypi.org/project/pathos/) multiprocessing framework. Previous iterations of the code ran simulations concurrently, but coordination and communication between processes used disk files as an intermediate, which was slow and caused the simulation to sometimes raise file permission errors. The new method using multiprocessing circumvents that error and explicitly instructs the simulation processes to run in parallel, which was not gauranteed in previous versions of the code.   
+Simulations for assignment 8 were run using 7 logical CPUs on a windows machine that has 8 total available. 
 
 <br>
 
