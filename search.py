@@ -1,10 +1,12 @@
 from parallelhillclimber import PARALLEL_HILL_CLIMBER
 import time
 import sys 
+import random
 
 if __name__ == '__main__':
 	seed = sys.argv[1]
 	start_time = time.time()
+	random.seed(seed)
 	phc = PARALLEL_HILL_CLIMBER(seed)
 	try:
 		phc.Evolve()
