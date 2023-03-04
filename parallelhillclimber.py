@@ -3,11 +3,13 @@ import os
 from datetime import datetime
 import pyrosim.pyrosim as pyrosim
 import numpy as np
+import pickle
 from pathos.multiprocessing import ProcessingPool as Pool
 from solution import SOLUTION
 from simulation import SIMULATION
 from world import WORLD
 import constants as c
+import random
 
 
 class PARALLEL_HILL_CLIMBER:
@@ -20,9 +22,10 @@ class PARALLEL_HILL_CLIMBER:
 		else:
 			raise Exception(f"ERROR: SEED DIR ALREADY EXISTS")
 		
-		self.fitnessValues = np.empty(c.numberOfGenerations)
+		self.fitnessValues = np.empty((c.numberOfGenerations, c.populationSize))
 		self.parents = {}
 		self.nextAvailableID = 0
+		self.currGen = 0
 
 		WORLD()
 
@@ -31,13 +34,29 @@ class PARALLEL_HILL_CLIMBER:
 			self.nextAvailableID += 1
 
 
-	def Evolve(self):
+	def Save(self):
+		self.Save_Fitness_Values()
+		# self.currGen += 1 # skip generation that caused error
+		f =  open(f"./{self.seed}/picklePHC.obj", "wb")
+		pickle.dump(self, f)
+		print(f"SAVING TO PICKLE AT GENERATION {self.currGen}")
+
+
+	def Resume_From_Pickle(self):
+		print(f"RESUMING FROM PICKLE AT GENERATION {self.currGen}")
+		self.fitnessValues = np.load(f"./{self.seed}/fitnessValues.npy")
+		random.setstate(self.state) # restore random state
+
+
+	def Evolve(self, startingGeneration):
 		self.Evaluate(self.parents)
-		for currentGeneration in range(c.numberOfGenerations):
+		for currentGeneration in range(startingGeneration, c.numberOfGenerations):
 			print(f"\n\n################ CURRENT GENERATION: {currentGeneration} ################ ")
+			self.state = random.getstate() # save state in case there's an error
 			self.Evolve_For_One_Generation(currentGeneration)
-			self.fitnessValues[currentGeneration] = self.Get_Best().fitness
-			self.Save_Fitness_Values()
+			self.fitnessValues[currentGeneration, :] = np.array([parent.fitness for parent in self.parents.values()])
+			# self.Save_Fitness_Values()
+			self.currGen += 1
 		
 	
 	def Evolve_For_One_Generation(self, currentGeneration):
@@ -123,7 +142,7 @@ class PARALLEL_HILL_CLIMBER:
 
 	def Save_Fitness_Values(self):
 		w = self.Get_Best()
-		print(f"WINNER for seed {self.seed}: solution {w.myID} with fitness {w.fitness}")
+		print(f"WINNER for seed {self.seed} at generation {self.currGen}: solution {w.myID} with fitness {w.fitness}")
 		file_path = f"./{self.seed}/fitnessValues"
 		try:
 			np.save(file_path, self.fitnessValues)
