@@ -124,8 +124,6 @@ class BODY:
 		self.allLinks = ["root", "000"]
 		self.allJoints = ["root_000"]
 		self.availableLinkID = 0
-		self.numLinks = 2 # root
-		self.numSensorNeurons = len(self.sensorLinks)		
 		self.Generate_Body_urdf(ID)
 		self.Calculate_Wingspan()
 
@@ -133,6 +131,12 @@ class BODY:
 	def Generate_Body_urdf(self, myID):
 		# function to recursively add links
 		def add_link(prevUniqueNode,  prevAbsPos, prevLinkName, currUniqueNode, currClone, currChild, currLinkName, growthDir):
+
+			# pyrosim allows a maximum of 128 links per body
+			if len(self.allLinks) > 127:
+				print(f"{len(self.allLinks)} is too much man, returning")
+				return
+
 			currNode = self.uniqueNodeList[currUniqueNode]
 			prevNode = self.uniqueNodeList[prevUniqueNode]
 			
@@ -174,7 +178,6 @@ class BODY:
 							  color=currNode.color)
 			
 			# maintain invariants
-			self.numLinks += 1
 			if currNode.has_sensor:
 				self.sensorLinks.append(currLinkName)	
 			self.allLinks.append(currLinkName)
