@@ -7,15 +7,15 @@ import pickle
 from pathos.multiprocessing import ProcessingPool as Pool
 from solution import SOLUTION
 from simulation import SIMULATION
-from world import WORLD
 import constants as c
 import random
 
 
 class PARALLEL_HILL_CLIMBER:
 
-	def __init__(self, seed):
+	def __init__(self, seed, numHiddenLayers):
 		self.seed = seed
+		self.numHiddenLayers = numHiddenLayers
 
 		if not os.path.exists(f"./{self.seed}"):
 			os.makedirs(f"./{self.seed}")
@@ -27,10 +27,9 @@ class PARALLEL_HILL_CLIMBER:
 		self.nextAvailableID = 0
 		self.currGen = 0
 
-		WORLD()
 
 		for i in range(c.populationSize):
-			self.parents[i] = SOLUTION(self.nextAvailableID, self.seed)
+			self.parents[i] = SOLUTION(self.nextAvailableID, self.seed, self.numHiddenLayers)
 			self.nextAvailableID += 1
 
 
@@ -43,7 +42,7 @@ class PARALLEL_HILL_CLIMBER:
 
 
 	def Resume_From_Pickle(self):
-		print(f"RESUMING FROM PICKLE AT GENERATION {self.currGen}")
+		print(f"\n\nRESUMING FROM PICKLE AT GENERATION {self.currGen}\n\n")
 		self.fitnessValues = np.load(f"./{self.seed}/fitnessValues.npy")
 		random.setstate(self.state) # restore random state
 
@@ -55,7 +54,7 @@ class PARALLEL_HILL_CLIMBER:
 			self.state = random.getstate() # save state in case there's an error
 			self.Evolve_For_One_Generation(currentGeneration)
 			self.fitnessValues[currentGeneration, :] = np.array([parent.fitness for parent in self.parents.values()])
-			# self.Save_Fitness_Values()
+			self.Save()
 			self.currGen += 1
 		
 	

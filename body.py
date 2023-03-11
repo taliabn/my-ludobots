@@ -41,9 +41,11 @@ class uniqueNode:
 
 class BODY:
 
-	def __init__(self, dna, solutionID, seed):
+	def __init__(self, dna, solutionID, seed, numHiddenLayers):
+		# print("\nINTIALIZING BODY CLASS\n")
 		self.seed = seed
 		self.dna = dna # list of [num selfEdges, num nextEdges] pairs
+		self.numHiddenLayers = int(numHiddenLayers)
 		self.orientationsQueue = [np.array([1,0,0]), np.array([0,1,0]), np.array([0,0,1])]
 		random.shuffle(self.orientationsQueue)
 		# initialize graph nodes
@@ -52,11 +54,23 @@ class BODY:
 		# self.PrintUniqueNodes()
 		self.initialPos = np.array(c.startingPos)
 		self.Generate_Body(solutionID)
-		self.prevSensortoHiddenWeights = {} # {link name: float [-1,1]}
-		self.prevHiddentoMotorWeights = {} # {joint name: float [-1,1]}
-		self.currSensortoHiddenWeights = {} # {link name: float [-1,1]}
-		self.currHiddentoMotorWeights = {} # {joint name: float [-1,1]}
-		self.Generate_Brain_nndf(solutionID)
+		# self.prevSensortoMotorWeights = {}
+		# self.prevSensortoHiddenWeights = {}
+		# self.prevHiddentoMotorWeights = {}
+		# self.prevHiddentoHiddenWeights = {} 
+		self.currSensortoMotorWeights = {}
+		self.currSensortoHiddenWeights = {}
+		self.currHiddentoMotorWeights = {}
+		self.currHiddentoHiddenWeights = {}
+		self.Generate_Brain(solutionID)
+		# if self.numHiddenLayers == 0:
+		# 	self.Gen_No_Hidden_Brain_nndf(solutionID)
+		# elif self.numHiddenLayers == 1:
+		# 	self.Gen_1_Hidden_Brain_nndf(solutionID)
+		# elif self.numHiddenLayers == 2:
+		# 	self.Gen_2_Hidden_Brain_nndf(solutionID)
+		# else:
+		# 	raise Exception(f"ERROR: {self.numHiddenLayers} is an invalid num hidden layers")
 
 
 	def PrintUniqueNodes(self):
@@ -134,7 +148,7 @@ class BODY:
 
 			# pyrosim allows a maximum of 128 links per body
 			if len(self.allLinks) > 127:
-				print(f"{len(self.allLinks)} is too much man, returning")
+				# print(f"{len(self.allLinks)} is too much man, returning")
 				return
 
 			currNode = self.uniqueNodeList[currUniqueNode]
@@ -227,6 +241,7 @@ class BODY:
 
 
 	def Mutate_Body(self):
+		# print("MUTATING BODY")
 		mutation_type = random.randint(0,3)
 		nodeidx = random.randint(0,len(self.uniqueNodeList)-1)
 		node = self.uniqueNodeList[nodeidx]
@@ -259,58 +274,205 @@ class BODY:
 						node.numChildEdge = clones - 1
 			
 
-
 	def Generate_Brain(self, myID):
-		self.prevHiddentoMotorWeights = self.currHiddentoMotorWeights
+		self.prevSensortoMotorWeights = self.currSensortoMotorWeights
 		self.prevSensortoHiddenWeights = self.currSensortoHiddenWeights
+		self.prevHiddentoHiddenWeights = self.currHiddentoHiddenWeights
+		self.prevHiddentoMotorWeights = self.currHiddentoMotorWeights
+		self.currSensortoMotorWeights = {}
 		self.currSensortoHiddenWeights = {}
-		self.currSensortoHiddenWeights = {}
-		self.Generate_Brain_nndf(myID)
+		self.currHiddentoHiddenWeights = {}
+		self.currHiddentoMotorWeights = {}
+		# print(f"ALL SENSOR:\n{self.sensorLinks}")
+		# print(f"ALL JOINTS:\n{self.allJoints}\n")
+		# print(f"SENSOR TO MOTOR\n: {self.prevSensortoMotorWeights}")
+		# print(f"SENSOR TO HIDDEN\n: {self.prevSensortoHiddenWeights}")
+		# print(f"HIDDEN TO HIDDEN\n: {self.prevHiddentoHiddenWeights}")
+		# print(f"HIDDEN TO MOTOR\n: {self.prevHiddentoMotorWeights}\n\n\n")
+		if self.numHiddenLayers == 0:
+			self.Gen_No_Hidden_Brain_nndf(myID)
+		elif self.numHiddenLayers == 1:
+			self.Gen_1_Hidden_Brain_nndf(myID)
+		elif self.numHiddenLayers == 2:
+			self.Gen_2_Hidden_Brain_nndf(myID)
+		else:
+			raise Exception("ERROR: invalid num hidden layers")
 
 
-	def Generate_Brain_nndf(self, myID):
+
+	def Gen_No_Hidden_Brain_nndf(self, myID):
+		# print("generating brain with 0 hidden layers")
+		pyrosim.Start_URDF(f"./{self.seed}/brain{myID}.nndf")
+
+		currNeuronName = 0
+		# create sensor neurons
+		for link in self.sensorLinks: 
+			# print(f"sending sensor neuron {currNeuronName} for link {link}")
+			pyrosim.Send_Sensor_Neuron(name = currNeuronName, linkName = link)
+			currNeuronName += 1
+
+		# create motor neurons
+		for joint in self.allJoints: 
+			# print(f"sending motor neuron {currNeuronName} for joint {joint}")
+			pyrosim.Send_Motor_Neuron(name = currNeuronName, jointName = joint)
+			currNeuronName += 1
+
+		# sensor-->motor synapses
+		numSensor = len(self.sensorLinks)
+		for i, link in enumerate(self.sensorLinks):
+			for j, joint in enumerate(self.allJoints):
+			# get weight if joint previously existed, else random
+				synapseName = f"S{link}_M{joint}"
+				# print(f"Sending synapse {synapseName} between {i} and {j + numSensor}")
+				weight =  self.prevSensortoMotorWeights.get(synapseName, random.random() * 2 -1)
+				self.currSensortoMotorWeights[synapseName] = weight
+				pyrosim.Send_Synapse(sourceNeuronName = i, 
+									targetNeuronName = j + numSensor, 
+									weight = weight)
+		pyrosim.End()
+
+
+	def Gen_1_Hidden_Brain_nndf(self, myID):
+		# print("generating brain with 1 hidden layers")
+
 		pyrosim.Start_URDF(f"./{self.seed}/brain{myID}.nndf")
 		# create hidden neurons
 		for i in  range(c.numHiddenNeurons):
+			# print(f"sending hidden neuron {i}")
 			pyrosim.Send_Hidden_Neuron(name = i)
 
 		currNeuronName = c.numHiddenNeurons
-
 		# sensor neurons and sensor-->hidden synapses
-		for i in  range(c.numHiddenNeurons):
-			for link in self.sensorLinks: 
-
+		# print("SENSOR to HIDDEN")
+		for link in self.sensorLinks: 
+			# print(f"sending sensor neuron {currNeuronName} for link {link}")
+			pyrosim.Send_Sensor_Neuron(name = currNeuronName, linkName = link)
+			for i in range(c.numHiddenNeurons):
+				synapseName = f'S{link}_HA{i}'
 				# get weight if same link (also with a sensor) previously existed, else random
-				weight =  self.prevSensortoHiddenWeights.get(link, random.random() * 2 -1)
-				self.currSensortoHiddenWeights[link] = weight
-
-				pyrosim.Send_Sensor_Neuron(name = currNeuronName, linkName = link)
+				weight =  self.prevSensortoHiddenWeights.get(synapseName, random.random() * 2 -1)
+				self.currSensortoHiddenWeights[synapseName] = weight
+				# print(f"sending synapse {synapseName} from {currNeuronName} to {i}")
 				pyrosim.Send_Synapse(sourceNeuronName = currNeuronName, 
 			 						targetNeuronName = i, 
 									weight = weight)
-				currNeuronName += 1
+			currNeuronName += 1
 		# sensor neurons and sensor-->hidden synapses
-		for i in  range(c.numHiddenNeurons):
-			for joint in self.allJoints: 
+		# print("HIDDEN TO MOTOR")
+		for joint in self.allJoints: 
+			# print(f"sending motor neuron {currNeuronName} for joint {joint}")
+			pyrosim.Send_Motor_Neuron(name = currNeuronName, jointName = joint)
+			for i in range(c.numHiddenNeurons):
+				synapseName = f'HA{i}_M{joint}'
 				# get weight if joint previously existed, else random
-				weight =  self.prevHiddentoMotorWeights.get(joint, random.random() * 2 -1)
-				self.currHiddentoMotorWeights[joint] = weight
-
-				pyrosim.Send_Motor_Neuron(name = currNeuronName, jointName = joint)
+				# print(f"sending synapse {synapseName} from {i} to {currNeuronName}")
+				weight =  self.prevHiddentoMotorWeights.get(synapseName, random.random() * 2 -1)
+				self.currHiddentoMotorWeights[synapseName] = weight
 				pyrosim.Send_Synapse(sourceNeuronName = i, 
 			 						targetNeuronName = currNeuronName, 
 									weight = weight)
-				currNeuronName += 1
+			currNeuronName += 1
 
 		pyrosim.End()
 
 
+	def Gen_2_Hidden_Brain_nndf(self, myID):
+		pyrosim.Start_URDF(f"./{self.seed}/brain{myID}.nndf")
+		# print("generating brain with 2 hidden layers")
+
+		# create hidden neurons
+		for i in range(c.numHiddenNeurons*2):
+			# print(f"sending hidden neuron {i}")
+			pyrosim.Send_Hidden_Neuron(name = i)
+
+		# print("HIDDEN A to HIDDEN B")
+		for i in range(c.numHiddenNeurons):
+			for j in range(c.numHiddenNeurons, 2*c.numHiddenNeurons):
+				synapseName = f'HA{i}_HB{j}'
+				weight = self.prevHiddentoHiddenWeights.get(synapseName, random.random() * 2 -1)
+				self.currHiddentoHiddenWeights[synapseName] = weight
+				# print(f"sending hidden-hidden synapse from {i} to {j}")
+				pyrosim.Send_Synapse(sourceNeuronName = i, 
+			 						targetNeuronName = j, 
+									weight = weight)
+		
+		currNeuronName = c.numHiddenNeurons * 2
+
+		# sensor neurons and sensor-->hidden synapses
+		# print("SENSOR to HIDDEN A")
+		for link in self.sensorLinks: 
+			# print(f"sending sensor neuron {currNeuronName} for link {link}")
+			pyrosim.Send_Sensor_Neuron(name = currNeuronName, linkName = link)
+			for i in range(c.numHiddenNeurons):
+				synapseName = f'S{link}_HA{i}'
+				# get weight if same link (also with a sensor) previously existed, else random
+				weight =  self.prevSensortoHiddenWeights.get(synapseName, random.random() * 2 -1)
+				self.currSensortoHiddenWeights[synapseName] = weight
+				# print(f"sending synapse from {currNeuronName} to {i}")
+				pyrosim.Send_Synapse(sourceNeuronName = currNeuronName, 
+			 						targetNeuronName = i, 
+									weight = weight)
+			currNeuronName += 1
+
+		# sensor neurons and sensor-->hidden synapses
+		# print("HIDDEN B to motor")
+		for joint in self.allJoints: 
+			pyrosim.Send_Motor_Neuron(name = currNeuronName, jointName = joint)
+			# print(f"sending motor neuron {currNeuronName} for joint {joint}")
+			for j in range(c.numHiddenNeurons, c.numHiddenNeurons*2):
+				synapseName = f'HB{j}_M{joint}'
+				# get weight if joint previously existed, else random
+				weight =  self.prevHiddentoMotorWeights.get(synapseName, random.random() * 2 -1)
+				self.currHiddentoMotorWeights[synapseName] = weight
+				# print(f"sending synapse from {j} to {currNeuronName}")
+				pyrosim.Send_Synapse(sourceNeuronName = j, 
+			 						targetNeuronName = currNeuronName, 
+									weight = weight)
+			currNeuronName += 1
+
+		pyrosim.End()
+		# print(self.currHiddentoHiddenWeights)
+		# print(self.currHiddentoMotorWeights)
+
 	def Mutate_Brain(self):
+		if self.numHiddenLayers == 0:
+			self.Mutate_No_Hidden_Brain()
+		elif self.numHiddenLayers == 1:
+			self.Mutate_1_Hidden_Brain()
+		elif self.numHiddenLayers == 2:
+			self.Mutate_2_Hidden_Brain()
+		else:
+			raise Exception("ERROR: invalid num hidden layers")
+
+	def Mutate_No_Hidden_Brain(self):
+		# print("MUTATING sensor to motor")
+		self.currSensortoMotorWeights[random.choice(list(self.currSensortoMotorWeights.keys()))] = random.random() * 2 -1
+	
+
+	def Mutate_1_Hidden_Brain(self):
+		# print("MUTATING 1 hidden brain")
 		m = (random.getrandbits(1))
 		if m:
-			self.currSensortoHiddenWeights[random.choice(self.sensorLinks)] = random.random() * 2 -1
+			# print("MUTATING sensor to hidden")
+			self.currSensortoHiddenWeights[random.choice(list(self.currSensortoHiddenWeights.keys()))] = random.random() * 2 -1
 		else:
-			self.currHiddentoMotorWeights[random.choice(self.allJoints)] = random.random() * 2 -1
+			# print("MUTATING hidden to motor")
+			self.currHiddentoMotorWeights[random.choice(list(self.currHiddentoMotorWeights.keys()))]= random.random() * 2 -1
+	
+	
+	def Mutate_2_Hidden_Brain(self):
+		# print("MUTATING 2 hidden brain")
+		m = random.randint(0, 2)
+		match m:
+			case 0:
+				# print("MUTATING sensor to hidden")
+				self.currSensortoHiddenWeights[random.choice(list(self.currSensortoHiddenWeights.keys()))] = random.random() * 2 -1
+			case 1:
+				# print("MUTATING hidden to hidden")
+				self.currHiddentoHiddenWeights[random.choice(list(self.currHiddentoHiddenWeights.keys()))] = random.random() * 2 -1
+			case 2:
+				# print("MUTATING hidden to motor")
+				self.currHiddentoMotorWeights[random.choice(list(self.currHiddentoMotorWeights.keys()))] = random.random() * 2 -1
 
 
 	def Calculate_Wingspan(self):

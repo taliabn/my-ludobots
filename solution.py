@@ -7,11 +7,11 @@ from body import BODY
 
 class SOLUTION:
 
-	def __init__(self, ID, seed):
+	def __init__(self, ID, seed, numHiddenLayers):
 		self.seed = seed
 		self.myID = ID
 		self.Generate_DNA()
-		self.body = BODY(self.dna, self.myID, self.seed)
+		self.body = BODY(self.dna, self.myID, self.seed, numHiddenLayers)
 
 
 	def Generate_DNA(self):
@@ -37,6 +37,10 @@ class SOLUTION:
 		# less likely to mutate body for later generations
 		probBody = 0.5 - 0.45*generation/c.numberOfGenerations
 		mutBody = random.choices(population=[0,1], weights=[1-probBody, probBody])[0]
+
+		# for last 25 generations, only mutate brain to allow for fine motor control
+		# mutBrain = (c.numberOfGenerations - generation) < 25 or (random.getrandbits(1))
+		# probBody = random.getrandbits(1) # equally likely to mutate brain or body
 		if mutBody:
 			self.body.Mutate_Body()
 		self.body.Generate_Body(self.myID)
