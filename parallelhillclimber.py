@@ -35,7 +35,6 @@ class PARALLEL_HILL_CLIMBER:
 
 	def Save(self):
 		self.Save_Fitness_Values()
-		# self.currGen += 1 # skip generation that caused error
 		f =  open(f"./{self.seed}/picklePHC.obj", "wb")
 		pickle.dump(self, f)
 		print(f"SAVING TO PICKLE AT GENERATION {self.currGen}")
@@ -43,8 +42,12 @@ class PARALLEL_HILL_CLIMBER:
 
 	def Resume_From_Pickle(self):
 		print(f"\n\nRESUMING FROM PICKLE AT GENERATION {self.currGen}\n\n")
-		self.fitnessValues = np.load(f"./{self.seed}/fitnessValues.npy")
 		random.setstate(self.state) # restore random state
+		self.fitnessValues = np.load(f"./{self.seed}/fitnessValues.npy")
+		if c.numberOfGenerations > len(self.fitnessValues):
+			extra = c.numberOfGenerations - len(self.fitnessValues)
+			print(f"Allocating {extra} additional rows in fitness values array")
+			self.fitnessValues = np.append(self.fitnessValues, np.empty((extra, c.populationSize)), axis=0)
 
 
 	def Evolve(self, startingGeneration):
