@@ -1,6 +1,6 @@
 # number of evolutions
 populationSize = 21
-numberOfGenerations = 250
+numberOfGenerations = 500
 # number of times to step through simulation
 steps = 750
 # length of each time-step in seconds
@@ -10,12 +10,6 @@ numHiddenNeurons = 4
 # motor properties
 motorJointRange = 1
 maxMotorForce = 20
-# pyramid dimensions
-gap_width = 1.75
-pyramid_x = -8
-num_pyramid_layers = 10
-pyramid_length = 15
-layer_height = 0.2
 # random body plan ranges
 maxNumNodes = 4
 maxNumSelfEdges = 2
