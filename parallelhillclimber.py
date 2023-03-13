@@ -4,7 +4,7 @@ from datetime import datetime
 import pyrosim.pyrosim as pyrosim
 import numpy as np
 import pickle
-from pathos.multiprocessing import ProcessingPool as Pool
+from pathos.multiprocessing import cpu_count, ProcessingPool # type: ignore
 from solution import SOLUTION
 from simulation import SIMULATION
 import constants as c
@@ -78,8 +78,8 @@ class PARALLEL_HILL_CLIMBER:
 			displacement = simulation.Return_Displacement()
 			return displacement
 		
-		# workers = mp.cpu_count() - 1 = 7
-		pool = Pool(processes = 7)
+		workers = cpu_count() - 1 # leave one cpu free for other tasks
+		pool = ProcessingPool(processes = workers)
 		inputs = [solution.myID for solution in solutions.values()]
 		outputs = pool.map(Run_Parallel_Simulation, inputs)
 		for i, solution in solutions.items():
