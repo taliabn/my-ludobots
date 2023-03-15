@@ -42,11 +42,16 @@ NOTE: The code has only been tested running from a Git Bash terminal on a Window
 # Final project
 The [final project](https://youtu.be/uux9ZBXE7Lc) uses this codebase to compare brain architectures of robots evolved for locomotion.  
 
-These are some of the best final evolved creatures:
-![simple simulated robots moving to the left](/figures/10s-highlights.gif) 
+These are some of the best final evolved creatures:  
+ 
+ <br>
+
+
+![simple simulated robots moving to the left](/figures/10s-highlights.gif)   
   
-
-
+ 
+ <br>
+  
 
 ## **Hypothesis**
 At a high level, robots move using hinge joints with motors that rotate the links (cube-shaped rigid body parts) they are attached to towards a desired angle. This target angle is informed by data from sensors that detect whether or not the link it is attached to is currently making contact with the floor. The robot's "brain" plays the role of mapping these sensor values to target motor angles.
