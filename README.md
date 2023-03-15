@@ -40,8 +40,12 @@ Parameters such as number of generations and population size, and simulation len
 NOTE: The code has only been tested running from a Git Bash terminal on a Windows machine.
 
 # Final project
-The [final project](https://youtu.be/uux9ZBXE7Lc) uses this codebase to compare brain architectures of robots evolved for locomotion.
+The [final project](https://youtu.be/uux9ZBXE7Lc) uses this codebase to compare brain architectures of robots evolved for locomotion.  
+
+These are some of the best final evolved creatures:
 ![simple simulated robots moving to the left](/figures/10s-highlights.gif) 
+  
+
 
 
 ## **Hypothesis**
@@ -209,20 +213,22 @@ Data and body/brain files from these simulations can be found in the folder "dat
 <br>
 
 ## Analysis
-From looking at the plots, it is unclear which brain architecture is better. Code used to perform further statistical analysis can be foundd in the file `stats.R`, which operates on numbers scraped using `clean.py`. The statistics investigated the final fitnesses for each individual in the population. Specifically, for each seed, the test statistics were median fitness, the best indivividual, and the mean of the best 5 individuals. Each of the three statistics was used seperately to compare each of the three experimental groups to each other using hypothesis tests.
+From looking at the plots, it is unclear which brain architecture is better. Code used to perform further statistical analysis can be found in the file `stats.R`, which operates on numbers scraped using `clean.py`. Analyziz investigated the final fitnesses for each individual in the population. Specifically, for each seed, the test statistics were median fitness, the best indivividual, and the mean of the best 5 individuals. Each of the three statistics was used seperately to compare each of the three experimental groups to each other using hypothesis tests.
 
 Using a standard t-test, *no significant difference* was found between the best or median final fitnesses and the number of hidden layers in a robot's brain. The same conclusions can be made using the Wilcoxon rank sum test.
 
 The only exception was if a confidence level of 10% was used, when looking at the best 5 final fitnesses, there was weak evidence (p-value = 0.076) to suggest that 0 hidden layers had lower fitness than 2 hidden layers. Again, the wilcox test led to the same conclusion (p-value = 0.090). 
 
-Final fitnesses for the best 5 individuals from each seed are compared in Figure 7.
+Final fitnesses for the best 5 individuals from each seed are compared in Figure 7.  
+
+
 ![boxplot comparing best fitnesses from the three experimental groups](/figures/best5-boxplot.png)
 #### **Figure 7.** Distributions of best 5 individuals from each seed
 
 <br>
 
 ## Conclusions
-There is little statistically significant evidence to suggest that the number of hidden layers has an impact on the best final evolved robot's capabilities for locomotion. A possible explanation is that the amount of randomness in the generated robot's bodies and the evolution process shadows any possible trends in effects of brain architecture.
+There is little statistically significant evidence to suggest that the number of hidden layers has an impact on the best final evolved robot's capabilities for locomotion. A possible explanation is that the amount of randomness in the generated robot's bodies and the evolution process shadows any possible trends due to brain architecture.
 
 
 Outside of number of hidden layers, in these simulations there were several common features found in the **bodies** of the most successful evolved creatures. In general, many of the best creatures had some (not all) of the following traits:
@@ -233,15 +239,15 @@ Outside of number of hidden layers, in these simulations there were several comm
 * Non-sensing base on top of single row of identical "legs"
 * "Tails" helping the creature balance and lean in the correct direction
 
-Note that many of the best body plans appear to primarily grow along one axis, but the morphospace allows for more diverse structures. See the section on [Generating Bodies](#generating-bodies) for details.
+Note that many of the best body plans appear to primarily grow along one axis, but the morphospace allows for more diverse structures. See the section on [Generating Bodies](#generating-bodies) for details.  
 
-<br>
+
 
 ## Next Steps
 Future work can test the same hypothesis with additionaly simulations by increasing the population size, number of generations, and number of trials.
 
 Other interesting hypotheses might relate to the evolutionary algorithm used or the method the robots are replicated and mutated. For instance, future experiments could investifate sexual reproduction where parent's body plans and brains are combined with crossover and then mutated.  
-Also the data is somewhere!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
 <br>
 
 # Previous Assignments
